@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
+import { MoviesModule } from './movies/movies.module';
+import { TagsModule } from './tags/tags.module';
 
 @Module({
   imports: [
@@ -10,6 +12,8 @@ import { UsersModule } from './users/users.module';
     TypeOrmModule.forRoot(),
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
+    MoviesModule,
+    TagsModule,
   ],
   controllers: [],
   providers: [],

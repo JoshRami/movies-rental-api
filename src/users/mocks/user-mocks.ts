@@ -14,12 +14,14 @@ export const mockUpdateUserParams: UpdateUserDto = {
 export const mockUserModel: User = {
   id: 1,
   ...mockAddUser,
+  tokens: undefined,
 };
 
 export const mockUpdatedUserModel: User = {
   id: mockUserModel.id,
   username: mockAddUser.username,
   password: 'updatedPassword',
+  tokens: undefined,
 };
 
 export const credentials = {
