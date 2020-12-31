@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from 'src/users/users.module';
 import { Token } from './tokens.entity';
 import { TokensService } from './tokens.service';
-import { TokensService } from './tokens/tokens.service';
 
 @Global()
 @Module({

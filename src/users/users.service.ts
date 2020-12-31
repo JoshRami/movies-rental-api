@@ -2,21 +2,25 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserRoleDto } from './dto/update.role.dto';
+import { Role } from './roles/role.entity';
+import { Roles } from './roles/roles.enum';
 import { User } from './users.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {}
-
-  async createUser(user: CreateUserDto) {
+  async createUser(user: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
   }
@@ -45,7 +49,9 @@ export class UsersService {
   }
 
   async getUser(id: number) {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne(id, {
+      relations: ['role'],
+    });
     if (!user) {
       throw new NotFoundException(`User not found, id: ${id}`);
     }
@@ -60,5 +66,38 @@ export class UsersService {
       );
     }
     return user;
+  }
+
+  async verifyAdmin(id: number): Promise<void> {
+    const user = await this.getUser(id);
+    const {
+      role: { role },
+    } = user;
+    if (role !== Roles.Admin) {
+      throw new UnauthorizedException(
+        'Sorry only admins can perform this action',
+      );
+    }
+  }
+
+  async changeUserRole(
+    toChangeUserRolId: number,
+    updateUserRoleDto: UpdateUserRoleDto,
+  ) {
+    const roleToChange = updateUserRoleDto.role;
+    const user = await this.getUser(toChangeUserRolId);
+
+    const roleToChangeEntity = await this.roleRepository.findOne({
+      role: roleToChange,
+    });
+
+    if (user.role === roleToChangeEntity) {
+      throw new BadRequestException(
+        `The user with id: ${toChangeUserRolId} already has role: ${roleToChange}`,
+      );
+    }
+    user.role = roleToChangeEntity;
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
   }
 }

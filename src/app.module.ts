@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { MoviesModule } from './movies/movies.module';
 import { TagsModule } from './tags/tags.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { TagsModule } from './tags/tags.module';
     ScheduleModule.forRoot(),
     MoviesModule,
     TagsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

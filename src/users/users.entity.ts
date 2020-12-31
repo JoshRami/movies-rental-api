@@ -1,5 +1,13 @@
 import { Token } from '../tokens/tokens.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Role } from '../users/roles/role.entity';
 
 @Entity()
 export class User {
@@ -14,4 +22,8 @@ export class User {
 
   @OneToMany((type) => Token, (token) => token.user)
   tokens: Token[];
+
+  @OneToOne(() => Role)
+  @JoinColumn()
+  role: Role;
 }
