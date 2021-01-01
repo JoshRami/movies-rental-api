@@ -10,6 +10,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MoviesService } from './movies.service';
@@ -87,5 +88,20 @@ export class MoviesController {
   async getMovie(@Param('id', ParseIntPipe) id: number) {
     const movie = await this.moviesService.getMovie(id);
     return { data: movie };
+  }
+
+  @Post(':id/tags')
+  @ApiResponse({
+    status: 204,
+    description: 'The tags has been successfully attached to the movie.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'movie not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async attachTagsToMovie(
+    @Param('id', ParseIntPipe) movieId: number,
+    @Body() addTagsToMovieDto: AddTagsToMovieDto,
+  ) {
+    await this.moviesService.assingTags(movieId, addTagsToMovieDto);
   }
 }

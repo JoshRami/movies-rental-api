@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create.tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tags.entity';
@@ -56,6 +56,15 @@ export class TagsService {
     if (!tags) {
       throw new NotFoundException(`Tags not found`);
     }
+    return tags;
+  }
+
+  async getTagsByIds(tagsIds: number[]) {
+    const tags = await getConnection()
+      .createQueryBuilder(Tag, 'tag')
+      .where('tag.id IN (:...tagsIds)', { tagsIds })
+      .getMany();
+
     return tags;
   }
 }
