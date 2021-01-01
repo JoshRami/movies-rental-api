@@ -1,5 +1,5 @@
 import { Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { TokensService } from 'src/tokens/tokens.service';
 import { AuthService } from './auth.service';
@@ -23,9 +23,9 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Bad credentials, user not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: CredentialsDto })
   @Post('login')
   @HttpCode(200)
-  @ApiExtraModels(CredentialsDto)
   async login(@Req() req) {
     const user = req.user;
     const accessToken = await this.authService.login(user);

@@ -22,6 +22,8 @@ export class UsersService {
   ) {}
   async createUser(user: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(user);
+    const role = await this.roleRepository.findOne({ role: Roles.Client });
+    newUser.role = role;
     return await this.userRepository.save(newUser);
   }
 

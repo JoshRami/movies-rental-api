@@ -13,6 +13,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UpdateUserRoleDto } from './dto/update.role.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -71,5 +72,20 @@ export class UsersController {
   async getUser(@Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.getUser(id);
     return { data: user };
+  }
+
+  @Post(':id/role')
+  @ApiResponse({
+    status: 204,
+    description: 'The user role has been successfully change it.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async changeUserRole(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+  ) {
+    await this.userService.changeUserRole(id, updateUserRoleDto);
   }
 }
