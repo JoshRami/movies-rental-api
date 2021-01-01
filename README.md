@@ -1,73 +1,39 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Movie Rental API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+The homework for this week consists of the creation of a small movie rental API(it'll be continued on the next week)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+1. Follow best REST API practices
+2. Use the Design patterns you think can improve your code readability or will improve your code stability
+3. Try to avoid anti-patterns
+4. PostgreSQL will be the DB to use
+5. You should provide a DB dump to test your API, along with a Postman collection to allow us to test your API on our local
+6. When doing the Unit/Integration test, make sure to follow the best API Testing practices.
+   10 Decide, whether or not, to use the same DB for your unit tests, or use a mocking library.
+7. Extra points are optional, as always. Work on them if you finish earlier!
 
-## Description
+### Base requirements
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [x] API should allow CRUD operations on movies (add, remove, update, create movies)
+- [x] API should allow CRUD operations on users (add, remove, update, create users)
+- [ ] Each movie should have a list of tags related to them
+- [x] Each movie should have a title, description, a poster, stock, a link to its trailer, sale price, likes and availability
+- [ ] API should have one admin by default
+- [x] If a user is admin or not should be handled by its Role. A user must have one Role (admin or client)
+- [ ] A client can rent a movie, return it or buy it.
+- [ ] Users should be able to get a list of movies (sorted alphabetically)
+- [ ] Add unit/integration tests (coverage must be 65% min)
 
-## Installation
+### Security requirements
 
-```bash
-$ npm install
-```
+- [ ] Any person (logged in or not) can view a list of available movies
+- [ ] Any person can see a movie's details
+- [ ] Only admins can add/modify/remove movies
+- [ ] Only logged in users can buy/rent a movie
+- [ ] Logging/logout should be done using JWT
+- [ ] Only admins should be able to add/remove tags
 
-## Running the app
+### Extra points
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- [ ] Send an email when a user rent/buy a movie with important information!
+- [ ] Allow an admin to change a user's role (from client to admin and viceversa)
+  > > > > > > > e4e0c94922b7092a3226f0ad8e285b9fde599f53
