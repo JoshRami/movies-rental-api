@@ -4,6 +4,8 @@ import * as MoviesMock from './mocks/movies-mocks';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Movie } from './movies.entity';
+import { TagsService } from '../tags/tags.service';
+import { mockTags } from './mocks/tags.mocks';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -15,12 +17,16 @@ describe('MoviesService', () => {
     findOne: jest.fn().mockReturnValue(MoviesMock.mockMovieModel),
     find: jest.fn().mockReturnValue(MoviesMock.mockMovies),
   };
+  const mockTagsServices = {
+    getTagsByIds: jest.fn().mockReturnValue(mockTags),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MoviesService,
         { provide: getRepositoryToken(Movie), useValue: mockRepo },
+        { provide: TagsService, useValue: mockTagsServices },
       ],
     }).compile();
 
@@ -91,9 +97,8 @@ describe('MoviesService', () => {
 
   describe('When getting an movie by id', () => {
     it('should get a movie', async () => {
-      const id = MoviesMock.mockMovieModel.id;
-
       mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
+      const id = MoviesMock.mockMovieModel.id;
       const movie = await service.getMovie(id);
 
       expect(mockRepo.findOne).toBeCalledWith(id);
@@ -126,6 +131,14 @@ describe('MoviesService', () => {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Movies not found');
       }
+    });
+  });
+
+  describe('When assigning tags to movies', () => {
+    it('should add tags to movie, by tags ids', async () => {
+      mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
+      const id = MoviesMock.mockMovieModel.id;
+      await service.assingTags(id, { tagsIds: [1, 2] });
     });
   });
 });

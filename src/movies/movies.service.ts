@@ -4,13 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TagsService } from 'src/tags/tags.service';
+import { TagsService } from '../tags/tags.service';
 
 import { Repository } from 'typeorm';
 import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './movies.entity';
+import { Tag } from 'src/tags/tags.entity';
 
 @Injectable()
 export class MoviesService {
@@ -60,7 +61,7 @@ export class MoviesService {
   }
 
   async getMovies(): Promise<Movie[]> {
-    const movies = await this.moviesRepository.find({ order: { title: -1 } });
+    const movies = await this.moviesRepository.find({ order: { title: 1 } });
     if (!movies) {
       throw new NotFoundException('Movies not found');
     }
@@ -73,7 +74,8 @@ export class MoviesService {
     });
     const tagsIds = addTagsToMovieDto.tagsIds;
     const tags = await this.tagsService.getTagsByIds(tagsIds);
-    movie.tags = [...movie.tags, ...tags];
+
+    movie.tags.push(...tags);
     await this.moviesRepository.save(movie);
   }
 }

@@ -19,6 +19,7 @@ export const mockUpdateMovieParams: UpdateMovieDto = {
 export const mockMovieModel: Movie = {
   id: 1,
   ...mockAddMovie,
+  tags: [],
 };
 
 export const mockUpdatedMovieModel: Movie = {

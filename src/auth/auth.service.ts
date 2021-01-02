@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { TokensService } from 'src/tokens/tokens.service';
+import { TokensService } from '../tokens/tokens.service';
 import { TokenDoc } from './docs/token.doc';
-import { User } from 'src/users/users.entity';
+import { User } from '../users/users.entity';
 import { plainToClass } from 'class-transformer';
 import { UserDoc } from '../users/docs/user.doc';
 

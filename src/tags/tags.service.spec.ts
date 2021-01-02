@@ -128,4 +128,13 @@ describe('TagsService', () => {
       }
     });
   });
+
+  describe('When getting tags by ids', () => {
+    it('should get tags entities by id', async () => {
+      mockRepo.find = jest.fn().mockReturnValue(TagsMocks.tags);
+
+      const tags = await service.getTagsByIds([1, 2]);
+      expect(tags).toBe(TagsMocks.tags);
+    });
+  });
 });

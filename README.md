@@ -20,7 +20,7 @@ The homework for this week consists of the creation of a small movie rental API(
 - [ ] API should have one admin by default
 - [x] If a user is admin or not should be handled by its Role. A user must have one Role (admin or client)
 - [ ] A client can rent a movie, return it or buy it.
-- [ ] Users should be able to get a list of movies (sorted alphabetically)
+- [x] Users should be able to get a list of movies (sorted alphabetically)
 - [ ] Add unit/integration tests (coverage must be 65% min)
 
 ### Security requirements

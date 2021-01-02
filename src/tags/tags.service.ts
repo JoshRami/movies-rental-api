@@ -60,11 +60,7 @@ export class TagsService {
   }
 
   async getTagsByIds(tagsIds: number[]) {
-    const tags = await getConnection()
-      .createQueryBuilder(Tag, 'tag')
-      .where('tag.id IN (:...tagsIds)', { tagsIds })
-      .getMany();
-
+    const tags = await this.tagRepository.find({ where: { id: tagsIds } });
     return tags;
   }
 }
