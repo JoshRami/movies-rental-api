@@ -25,14 +25,14 @@ The homework for this week consists of the creation of a small movie rental API(
 
 ### Security requirements
 
-- [ ] Any person (logged in or not) can view a list of available movies
-- [ ] Any person can see a movie's details
-- [ ] Only admins can add/modify/remove movies
-- [ ] Only logged in users can buy/rent a movie
-- [ ] Logging/logout should be done using JWT
-- [ ] Only admins should be able to add/remove tags
+- [x] Any person (logged in or not) can view a list of available movies
+- [x] Any person can see a movie's details
+- [x] Only admins can add/modify/remove movies
+- [x] Only logged in users can buy/rent a movie
+- [x] Logging/logout should be done using JWT
+- [x] Only admins should be able to add/remove tags
 
 ### Extra points
 
 - [ ] Send an email when a user rent/buy a movie with important information!
-- [ ] Allow an admin to change a user's role (from client to admin and viceversa)
+- [x] Allow an admin to change a user's role (from client to admin and viceversa)

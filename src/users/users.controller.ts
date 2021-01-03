@@ -8,12 +8,17 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UpdateUserRoleDto } from './dto/update.role.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
+import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
 
 @ApiTags('Users')
 @Controller('users')
@@ -32,8 +37,10 @@ export class UsersController {
     return { data: user };
   }
 
-  @Delete(':id')
+  @Delete('me')
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 204,
     description: 'The user has been successfully deleted.',
@@ -41,11 +48,14 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'User to delete not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async deleteUser(@Param('id', ParseIntPipe) id: number) {
+  async deleteUser(@Req() req) {
+    const id = req.user.id;
     await this.userService.deleteUser(id);
   }
 
-  @Patch(':id')
+  @Patch('me')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiResponse({
     status: 200,
     description: 'The user has been successfully updated.',
@@ -53,15 +63,15 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 400, description: 'User to update not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async updateUser(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
+  async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const id = req.user.id;
     const updatedUser = await this.userService.updateUser(id, updateUserDto);
     return { data: updatedUser };
   }
 
-  @Get(':id')
+  @Get('me')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 201,
     description: 'The user has been successfully return it.',
@@ -69,12 +79,14 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async getUser(@Param('id', ParseIntPipe) id: number) {
+  async getUser(@Req() req) {
+    const id = req.user.id;
     const user = await this.userService.getUser(id);
     return { data: user };
   }
 
   @Post(':id/role')
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiResponse({
     status: 204,
     description: 'The user role has been successfully change it.',

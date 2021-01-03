@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create.tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { Tag } from './tags.entity';

@@ -9,8 +9,12 @@ import {
   Patch,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
+import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
 import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -22,6 +26,8 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 201,
     description: 'The movie has been successfully created.',
@@ -34,6 +40,8 @@ export class MoviesController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
+  @ApiBearerAuth()
   @HttpCode(204)
   @ApiResponse({
     status: 204,
@@ -47,6 +55,8 @@ export class MoviesController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 200,
     description: 'The movie has been successfully updated.',
@@ -92,6 +102,7 @@ export class MoviesController {
   }
 
   @Post(':id/tags')
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiResponse({
     status: 204,
     description: 'The tags has been successfully attached to the movie.',
@@ -107,6 +118,8 @@ export class MoviesController {
   }
 
   @Post(':id/rent')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
   @HttpCode(200)
   @ApiResponse({
     status: 200,
@@ -121,11 +134,13 @@ export class MoviesController {
       'The movie cannot be rent due to not availability or there is not stock',
   })
   async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Body() req) {
-    //const userId = req.user.id;
-    await this.moviesService.rentMovie(movieId, 2);
+    const userId = req.user.id;
+    await this.moviesService.rentMovie(movieId, userId);
   }
 
   @Post(':id/rent/return')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
   @HttpCode(200)
   @ApiResponse({
     status: 200,
@@ -142,11 +157,13 @@ export class MoviesController {
     @Param('id', ParseIntPipe) movieId: number,
     @Req() req,
   ) {
-    //const userId = req.user.id;
-    await this.moviesService.returnMovie(movieId, 2);
+    const userId = req.user.id;
+    await this.moviesService.returnMovie(movieId, userId);
   }
 
   @Post(':id/buy')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
   @HttpCode(200)
   @ApiResponse({
     status: 200,
@@ -164,7 +181,7 @@ export class MoviesController {
     description: 'The user have not rent this movie',
   })
   async buyMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
-    //const userId = req.user.id;
-    await this.moviesService.purchaseMovie(movieId, 2);
+    const userId = req.user.id;
+    await this.moviesService.purchaseMovie(movieId, userId);
   }
 }
