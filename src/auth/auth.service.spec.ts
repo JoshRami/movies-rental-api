@@ -4,6 +4,7 @@ import { mockUserModel } from '../users/mocks/user-mocks';
 import { TokensService } from '../tokens/tokens.service';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
+import * as TokenMocks from '../tokens/mocks/tockens.mocks';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -11,8 +12,13 @@ describe('AuthService', () => {
   const mockUserService = {
     findByCredentials: jest.fn().mockReturnValue(mockUserModel),
   };
-  const mockJwtService = {};
-  const mockTokensService = {};
+  const mockJwtService = {
+    sign: jest.fn().mockReturnValue(TokenMocks.token),
+    decode: jest.fn().mockReturnValue({ exp: 500 }),
+  };
+  const mockTokensService = {
+    saveToken: jest.fn().mockReturnValue(TokenMocks.token),
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -35,6 +41,15 @@ describe('AuthService', () => {
       const { username, password } = mockUserModel;
       const user = await service.validateUser(username, password);
       expect(user).toBe(mockUserModel);
+    });
+  });
+
+  describe('While loging', () => {
+    it('should return an access token', async () => {
+      const { username, id } = mockUserModel;
+
+      const token = await service.login({ username, id });
+      expect(token).toBe(TokenMocks.token.token);
     });
   });
 });

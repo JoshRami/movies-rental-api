@@ -1,11 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { MoviesService } from './movies.service';
 import * as MoviesMock from './mocks/movies-mocks';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import * as PurchasesMock from '../purchases/mocks/purchases.mocks';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Movie } from './movies.entity';
 import { TagsService } from '../tags/tags.service';
 import { mockTags } from './mocks/tags.mocks';
+import { UsersService } from '../users/users.service';
+import { RentsService } from '../rents/rents.service';
+import { PurchasesService } from '../purchases/purchases.service';
+import { mockUserModel } from '../users/mocks/user-mocks';
+import { mockRentTransactionModel } from '../rents/mocks/rents.mocks';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -20,6 +31,18 @@ describe('MoviesService', () => {
   const mockTagsServices = {
     getTagsByIds: jest.fn().mockReturnValue(mockTags),
   };
+  const mockUserServices = {
+    getUser: jest.fn().mockReturnValue(mockUserModel),
+  };
+  const mockRentsServices = {
+    insertRentTransaction: jest.fn().mockReturnValue(mockRentTransactionModel),
+    deleteRentTransaction: jest.fn().mockReturnValue({ affected: 1 }),
+  };
+  const mockPurchasesServices = {
+    insertPurchaseTransaction: jest
+      .fn()
+      .mockReturnValue(PurchasesMock.mockPurchaseModel),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +50,9 @@ describe('MoviesService', () => {
         MoviesService,
         { provide: getRepositoryToken(Movie), useValue: mockRepo },
         { provide: TagsService, useValue: mockTagsServices },
+        { provide: UsersService, useValue: mockUserServices },
+        { provide: RentsService, useValue: mockRentsServices },
+        { provide: PurchasesService, useValue: mockPurchasesServices },
       ],
     }).compile();
 
@@ -139,6 +165,102 @@ describe('MoviesService', () => {
       mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
       const id = MoviesMock.mockMovieModel.id;
       await service.assingTags(id, { tagsIds: [1, 2] });
+    });
+  });
+
+  describe('When renting a movie', () => {
+    it('should rent a movie', async () => {
+      mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+
+      const transaction = await service.rentMovie(movieId, userId);
+      expect(transaction).toBe(mockRentTransactionModel);
+    });
+
+    it('should throw error when movie is not available', async () => {
+      mockRepo.findOne = jest
+        .fn()
+        .mockReturnValue(MoviesMock.mockMovieModelNoAvailable);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+      try {
+        await service.rentMovie(movieId, userId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          'The movie is not available or there are not stock',
+        );
+      }
+    });
+
+    it('should throw error when movie has not stock', async () => {
+      mockRepo.findOne = jest
+        .fn()
+        .mockReturnValue(MoviesMock.mockMovieModelNoStock);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+      try {
+        await service.rentMovie(movieId, userId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          'The movie is not available or there are not stock',
+        );
+      }
+    });
+  });
+
+  describe('When returning a movie', () => {
+    it('should return the movie updating the movie stock by one ', async () => {
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+
+      const movie = await service.returnMovie(movieId, userId);
+      expect(movie.stock).toBe(MoviesMock.mockMovieModel.stock + 1);
+    });
+  });
+
+  describe('When buying a movie', () => {
+    it('should buy the movie', async () => {
+      mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+
+      const transaction = await service.purchaseMovie(movieId, userId);
+      expect(transaction).toBe(PurchasesMock.mockPurchaseModel);
+    });
+
+    it('should throw error when movie is not available', async () => {
+      mockRepo.findOne = jest
+        .fn()
+        .mockReturnValue(MoviesMock.mockMovieModelNoAvailable);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+      try {
+        await service.purchaseMovie(movieId, userId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          'The movie is not available or there are not stock',
+        );
+      }
+    });
+
+    it('should throw error when movie has not stock', async () => {
+      mockRepo.findOne = jest
+        .fn()
+        .mockReturnValue(MoviesMock.mockMovieModelNoStock);
+      const movieId = MoviesMock.mockMovieModel.id;
+      const userId = mockUserModel.id;
+      try {
+        await service.purchaseMovie(movieId, userId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ConflictException);
+        expect(error.message).toBe(
+          'The movie is not available or there are not stock',
+        );
+      }
     });
   });
 });

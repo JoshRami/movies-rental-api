@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
@@ -103,5 +104,67 @@ export class MoviesController {
     @Body() addTagsToMovieDto: AddTagsToMovieDto,
   ) {
     await this.moviesService.assingTags(movieId, addTagsToMovieDto);
+  }
+
+  @Post(':id/rent')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'The rent of the movies has been successful.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'movie not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 409,
+    description:
+      'The movie cannot be rent due to not availability or there is not stock',
+  })
+  async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Body() req) {
+    //const userId = req.user.id;
+    await this.moviesService.rentMovie(movieId, 2);
+  }
+
+  @Post(':id/rent/return')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'The movie has been successfuly return it.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'movie not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 400,
+    description: 'The user have not rent this movie',
+  })
+  async returnRentedMovie(
+    @Param('id', ParseIntPipe) movieId: number,
+    @Req() req,
+  ) {
+    //const userId = req.user.id;
+    await this.moviesService.returnMovie(movieId, 2);
+  }
+
+  @Post(':id/buy')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'The movie has been successfuly buyed.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({ status: 404, description: 'movie not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 409,
+    description: 'The movie is not available or there is not stock',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'The user have not rent this movie',
+  })
+  async buyMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
+    //const userId = req.user.id;
+    await this.moviesService.purchaseMovie(movieId, 2);
   }
 }

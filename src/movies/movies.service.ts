@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,7 +12,9 @@ import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './movies.entity';
-import { Tag } from 'src/tags/tags.entity';
+import { UsersService } from '../users/users.service';
+import { RentsService } from '../rents/rents.service';
+import { PurchasesService } from '../purchases/purchases.service';
 
 @Injectable()
 export class MoviesService {
@@ -19,6 +22,9 @@ export class MoviesService {
     @InjectRepository(Movie)
     private readonly moviesRepository: Repository<Movie>,
     private readonly tagsService: TagsService,
+    private readonly usersService: UsersService,
+    private readonly rentsService: RentsService,
+    private readonly purchasesService: PurchasesService,
   ) {}
 
   async createMovie(movie: CreateMovieDto): Promise<Movie> {
@@ -77,5 +83,50 @@ export class MoviesService {
 
     movie.tags.push(...tags);
     await this.moviesRepository.save(movie);
+  }
+
+  async rentMovie(movieId: number, userId: number) {
+    const movie = await this.moviesRepository.findOne(movieId);
+    const user = await this.usersService.getUser(userId);
+    if (!movie.stock || !movie.availability) {
+      throw new ConflictException(
+        'The movie is not available or there are not stock',
+      );
+    }
+    const transaction = await this.rentsService.insertRentTransaction(
+      user,
+      movie,
+    );
+    movie.stock -= 1;
+    await this.moviesRepository.save(movie);
+
+    return transaction;
+  }
+
+  async returnMovie(movieId: number, userId: number) {
+    const movie = await this.moviesRepository.findOne(movieId);
+    const user = await this.usersService.getUser(userId);
+    await this.rentsService.deleteRentTransaction(user, movie);
+    movie.stock += 1;
+
+    return await this.moviesRepository.save(movie);
+  }
+
+  async purchaseMovie(movieId: number, userId: number) {
+    const movie = await this.moviesRepository.findOne(movieId);
+    const user = await this.usersService.getUser(userId);
+    if (!movie.stock || !movie.availability) {
+      throw new ConflictException(
+        'The movie is not available or there are not stock',
+      );
+    }
+    const purchase = await this.purchasesService.insertPurchaseTransaction(
+      user,
+      movie,
+    );
+    movie.stock -= 1;
+    await this.moviesRepository.save(movie);
+
+    return purchase;
   }
 }

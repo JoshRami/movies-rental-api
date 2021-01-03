@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { MoviesModule } from './movies/movies.module';
 import { TagsModule } from './tags/tags.module';
 import { AuthModule } from './auth/auth.module';
+import { RentsModule } from './rents/rents.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
     MoviesModule,
     TagsModule,
     AuthModule,
+    RentsModule,
   ],
   controllers: [],
   providers: [],

@@ -4,8 +4,10 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Rent } from '../rents/rents.entity';
 
 @Entity()
 export class Movie {
@@ -16,16 +18,16 @@ export class Movie {
   title: string;
 
   @Column({ type: 'text', nullable: true })
-  description?: string;
+  description: string;
 
   @Column({ nullable: true })
-  poster?: string;
+  poster: string;
 
   @Column({ default: 1 })
   stock: number;
 
   @Column({ nullable: true })
-  trailer?: string;
+  trailer: string;
 
   @Column({ type: 'numeric', precision: 2 })
   salePrice: number;
@@ -36,7 +38,10 @@ export class Movie {
   @Column({ default: true })
   availability: boolean;
 
-  @ManyToMany((type) => Tag, (tag) => tag.movies)
+  @ManyToMany(() => Tag, (tag) => tag.movies)
   @JoinTable({ name: 'movies_tags' })
   tags?: Tag[];
+
+  @OneToMany(() => Rent, (rent) => rent.movie)
+  rents?: Rent[];
 }

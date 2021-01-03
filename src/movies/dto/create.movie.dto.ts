@@ -17,12 +17,12 @@ export class CreateMovieDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  description?: string;
+  description: string;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  poster?: string;
+  poster: string;
 
   @ApiProperty()
   @IsNumber()
@@ -32,7 +32,7 @@ export class CreateMovieDto {
   @IsOptional()
   @IsString()
   @IsUrl()
-  trailer?: string;
+  trailer: string;
 
   @ApiProperty()
   @IsNotEmpty()
