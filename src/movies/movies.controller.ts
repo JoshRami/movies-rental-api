@@ -102,6 +102,7 @@ export class MoviesController {
   }
 
   @Post(':id/tags')
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiResponse({
     status: 204,
@@ -133,7 +134,7 @@ export class MoviesController {
     description:
       'The movie cannot be rent due to not availability or there is not stock',
   })
-  async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Body() req) {
+  async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
     const userId = req.user.id;
     await this.moviesService.rentMovie(movieId, userId);
   }

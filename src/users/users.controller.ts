@@ -87,6 +87,7 @@ export class UsersController {
 
   @Post(':id/role')
   @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
+  @ApiBearerAuth()
   @ApiResponse({
     status: 204,
     description: 'The user role has been successfully change it.',

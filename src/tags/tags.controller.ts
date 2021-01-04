@@ -14,7 +14,6 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
 import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
-import { AdminRole } from 'src/users/mocks/role-mocks';
 import { CreateTagDto } from './dto/create.tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { TagsService } from './tags.service';

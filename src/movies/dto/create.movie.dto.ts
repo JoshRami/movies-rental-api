@@ -22,6 +22,7 @@ export class CreateMovieDto {
   @ApiProperty()
   @IsOptional()
   @IsString()
+  @IsUrl()
   poster: string;
 
   @ApiProperty()

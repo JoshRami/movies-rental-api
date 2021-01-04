@@ -3,8 +3,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from '../users/roles/role.entity';
@@ -25,9 +25,9 @@ export class User {
   @OneToMany(() => Token, (token) => token.user)
   tokens: Token[];
 
-  @OneToOne(() => Role)
+  @ManyToOne(() => Role)
   @JoinColumn()
-  role: Role;
+  role!: Role;
 
   @OneToMany(() => Rent, (rent) => rent.user)
   rents?: Rent[];

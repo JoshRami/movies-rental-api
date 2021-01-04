@@ -9,7 +9,10 @@ export class Token {
   @Column()
   token: string;
 
-  @ManyToOne((type) => User, (user) => user.tokens)
+  @ManyToOne((type) => User, (user) => user.tokens, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   user: User;
 
   @Column({ type: 'timestamp with time zone' })

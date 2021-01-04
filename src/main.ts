@@ -16,6 +16,7 @@ async function bootstrap() {
       'This API let you to handle movies, tags related to movies, and user. Also users can rent or buy movies.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
