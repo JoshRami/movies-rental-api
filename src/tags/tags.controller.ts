@@ -32,6 +32,12 @@ export class TagsController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async createTag(@Body() createTagDto: CreateTagDto) {
     const tag = await this.tagsService.createTag(createTagDto);
     return { data: tag };
@@ -46,8 +52,13 @@ export class TagsController {
     description: 'The tag has been successfully deleted.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'Tag to delete not found' })
+  @ApiResponse({ status: 404, description: 'Tag to delete not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async deleteTag(@Param('id', ParseIntPipe) id: number) {
     await this.tagsService.deleteTag(id);
   }
@@ -60,9 +71,15 @@ export class TagsController {
     description: 'The tag has been successfully updated.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'Tag to update not found' })
+  @ApiResponse({ status: 404, description: 'Tag to update not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  async updateUser(
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
+  async updateTag(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateTagDto,
   ) {
@@ -78,6 +95,11 @@ export class TagsController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'Tag not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async getUser(@Param('id', ParseIntPipe) id: number) {
     const tag = await this.tagsService.getTag(id);
     return { data: tag };
@@ -91,6 +113,11 @@ export class TagsController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'movie not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async getTags() {
     const tags = await this.tagsService.getTags();
     return { data: tags };

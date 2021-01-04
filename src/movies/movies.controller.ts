@@ -34,6 +34,12 @@ export class MoviesController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async createMovie(@Body() createUserDto: CreateMovieDto) {
     const movie = await this.moviesService.createMovie(createUserDto);
     return { data: movie };
@@ -48,8 +54,12 @@ export class MoviesController {
     description: 'The movie has been successfully deleted.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'Movie to delete not found' })
+  @ApiResponse({ status: 404, description: 'Movie to delete not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async deleteMovie(@Param('id', ParseIntPipe) id: number) {
     await this.moviesService.deleteMovie(id);
   }
@@ -63,8 +73,14 @@ export class MoviesController {
     description: 'The movie has been successfully updated.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'movie to update not found' })
+  @ApiResponse({ status: 404, description: 'movie to update not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async updateMovie(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateMovieDto,
@@ -84,6 +100,11 @@ export class MoviesController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'movie not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async getMovies() {
     const movies = await this.moviesService.getMovies();
     return { data: movies };
@@ -97,6 +118,11 @@ export class MoviesController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'movie not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async getMovie(@Param('id', ParseIntPipe) id: number) {
     const movie = await this.moviesService.getMovie(id);
     return { data: movie };
@@ -113,6 +139,12 @@ export class MoviesController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'movie not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async attachTagsToMovie(
     @Param('id', ParseIntPipe) movieId: number,
     @Body() addTagsToMovieDto: AddTagsToMovieDto,
@@ -135,6 +167,11 @@ export class MoviesController {
     status: 409,
     description:
       'The movie cannot be rent due to not availability or there is not stock',
+  })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
   })
   async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
     const userId = req.user.id;
@@ -162,7 +199,12 @@ export class MoviesController {
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @ApiResponse({
     status: 400,
-    description: 'The user have not rent this movie',
+    description:
+      'You have submitted wrong data, or trying to return a movie wich is not rented by the user',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
   })
   async returnRentedMovie(
     @Param('id', ParseIntPipe) movieId: number,
@@ -189,7 +231,11 @@ export class MoviesController {
   })
   @ApiResponse({
     status: 400,
-    description: 'The user have not rent this movie',
+    description: 'Bad format input data, or the user have not rent this movie',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
   })
   async buyMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
     const userId = req.user.id;

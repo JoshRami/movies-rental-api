@@ -22,6 +22,14 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Bad credentials, user not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 400,
+    description: 'You have submitted wrong input data',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: CredentialsDto })
   @Post('login')
@@ -42,6 +50,11 @@ export class AuthController {
   })
   @ApiResponse({ status: 401, description: 'Invalid token' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async logout(@Req() req: Request) {
     const accessToken = req.get('Authorization').split(' ')[1];
     await this.tokenService.deleteToken(accessToken);

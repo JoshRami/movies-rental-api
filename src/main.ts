@@ -5,6 +5,7 @@ import { json } from 'express';
 import * as helmet from 'helmet';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './core/db.exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,6 +28,8 @@ async function bootstrap() {
   }
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const port = parseInt(process.env.PORT) || 3000;
   await app.listen(port);

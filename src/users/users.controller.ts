@@ -20,7 +20,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
 import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
 import { AssociateEmailDto } from './dto/associate.email.dto';
-import { MailerService } from '@nestjs-modules/mailer';
 
 @ApiTags('Users')
 @Controller('users')
@@ -34,6 +33,12 @@ export class UsersController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async createUser(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.createUser(createUserDto);
     return { data: user };
@@ -48,8 +53,13 @@ export class UsersController {
     description: 'The user has been successfully deleted.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'User to delete not found' })
+  @ApiResponse({ status: 404, description: 'User to delete not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async deleteUser(@Req() req) {
     const id = req.user.id;
     await this.userService.deleteUser(id);
@@ -63,8 +73,14 @@ export class UsersController {
     description: 'The user has been successfully updated.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 400, description: 'User to update not found' })
+  @ApiResponse({ status: 404, description: 'User to update not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
   async updateUser(@Req() req, @Body() updateUserDto: UpdateUserDto) {
     const id = req.user.id;
     const updatedUser = await this.userService.updateUser(id, updateUserDto);
@@ -81,6 +97,10 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async getUser(@Req() req) {
     const id = req.user.id;
     const user = await this.userService.getUser(id);
@@ -98,6 +118,11 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async changeUserRole(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserRoleDto: UpdateUserRoleDto,
@@ -116,6 +141,11 @@ export class UsersController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
   async associateEmail(
     @Req() req,
     @Body()
