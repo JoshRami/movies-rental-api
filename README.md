@@ -17,7 +17,7 @@ The homework for this week consists of the creation of a small movie rental API(
 - [x] API should allow CRUD operations on users (add, remove, update, create users)
 - [x] Each movie should have a list of tags related to them
 - [x] Each movie should have a title, description, a poster, stock, a link to its trailer, sale price, likes and availability
-- [ ] API should have one admin by default
+- [x] API should have one admin by default
 - [x] If a user is admin or not should be handled by its Role. A user must have one Role (admin or client)
 - [x] A client can rent a movie, return it or buy it.
 - [x] Users should be able to get a list of movies (sorted alphabetically)
@@ -34,5 +34,5 @@ The homework for this week consists of the creation of a small movie rental API(
 
 ### Extra points
 
-- [ ] Send an email when a user rent/buy a movie with important information!
+- [x] Send an email when a user rent/buy a movie with important information!
 - [x] Allow an admin to change a user's role (from client to admin and viceversa)

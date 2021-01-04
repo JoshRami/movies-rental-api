@@ -15,6 +15,7 @@ import { Movie } from './movies.entity';
 import { UsersService } from '../users/users.service';
 import { RentsService } from '../rents/rents.service';
 import { PurchasesService } from '../purchases/purchases.service';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MoviesService {
@@ -25,6 +26,7 @@ export class MoviesService {
     private readonly usersService: UsersService,
     private readonly rentsService: RentsService,
     private readonly purchasesService: PurchasesService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async createMovie(movie: CreateMovieDto): Promise<Movie> {
@@ -98,8 +100,22 @@ export class MoviesService {
       movie,
     );
     movie.stock -= 1;
-    await this.moviesRepository.save(movie);
 
+    await this.moviesRepository.save(movie);
+    if (user.email) {
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: 'ia.josuequinteros@ufg.edu.sv',
+        template: 'transaction',
+        subject: 'Transaction summary - Movie Rental ✔',
+        context: {
+          usermame: user.username,
+          movie,
+          transactionType: 'Rental',
+          rentDate: transaction.rentDate,
+        },
+      });
+    }
     return transaction;
   }
 
@@ -125,7 +141,22 @@ export class MoviesService {
       movie,
     );
     movie.stock -= 1;
+
     await this.moviesRepository.save(movie);
+    if (user.email) {
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: 'ia.josuequinteros@ufg.edu.sv',
+        template: 'transaction',
+        subject: 'Transaction summary - Movie Rental ✔',
+        context: {
+          username: user.username,
+          movie,
+          transactionType: 'Purchase',
+          rentDate: purchase.rentDate,
+        },
+      });
+    }
 
     return purchase;
   }

@@ -22,6 +22,9 @@ export class User {
   @Column()
   password: string;
 
+  @Column({ unique: true, nullable: true })
+  email?: string;
+
   @OneToMany(() => Token, (token) => token.user)
   tokens: Token[];
 

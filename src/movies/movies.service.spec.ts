@@ -17,6 +17,7 @@ import { RentsService } from '../rents/rents.service';
 import { PurchasesService } from '../purchases/purchases.service';
 import { mockUserModel } from '../users/mocks/user-mocks';
 import { mockRentTransactionModel } from '../rents/mocks/rents.mocks';
+import { MailerService } from '@nestjs-modules/mailer';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -44,6 +45,10 @@ describe('MoviesService', () => {
       .mockReturnValue(PurchasesMock.mockPurchaseModel),
   };
 
+  const mockMailerServices = {
+    sendEmail: jest.fn().mockReturnValue(undefined),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -53,6 +58,7 @@ describe('MoviesService', () => {
         { provide: UsersService, useValue: mockUserServices },
         { provide: RentsService, useValue: mockRentsServices },
         { provide: PurchasesService, useValue: mockPurchasesServices },
+        { provide: MailerService, useValue: mockMailerServices },
       ],
     }).compile();
 

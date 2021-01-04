@@ -72,7 +72,7 @@ export class TagsController {
 
   @Get(':id')
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'The tag has been successfully return it.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })

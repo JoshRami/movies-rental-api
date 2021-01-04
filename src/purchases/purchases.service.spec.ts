@@ -9,8 +9,8 @@ import { mockMovieModel } from '../movies/mocks/movies-mocks';
 describe('PurchasesService', () => {
   let service: PurchasesService;
   const mockRepo = {
-    create: jest.fn().mockReturnValue(purchasesMocks.purchase),
-    save: jest.fn().mockReturnValue(purchasesMocks.purchaseModel),
+    create: jest.fn().mockReturnValue(purchasesMocks.mockPurchase),
+    save: jest.fn().mockReturnValue(purchasesMocks.mockPurchaseModel),
   };
 
   beforeEach(async () => {
@@ -34,7 +34,7 @@ describe('PurchasesService', () => {
         mockUserModel,
         mockMovieModel,
       );
-      expect(purchaseTransaction).toBe(purchasesMocks.purchaseModel);
+      expect(purchaseTransaction).toBe(purchasesMocks.mockPurchaseModel);
     });
   });
 });

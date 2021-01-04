@@ -55,6 +55,7 @@ export class MoviesController {
   }
 
   @Patch(':id')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiBearerAuth()
   @ApiResponse({
@@ -90,7 +91,7 @@ export class MoviesController {
 
   @Get(':id')
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'The movie has been successfully return it.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -102,6 +103,7 @@ export class MoviesController {
   }
 
   @Post(':id/tags')
+  @HttpCode(204)
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiResponse({
@@ -119,9 +121,9 @@ export class MoviesController {
   }
 
   @Post(':id/rent')
+  @HttpCode(200)
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
-  @HttpCode(200)
   @ApiResponse({
     status: 200,
     description: 'The rent of the movies has been successful.',
@@ -136,15 +138,23 @@ export class MoviesController {
   })
   async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
     const userId = req.user.id;
-    await this.moviesService.rentMovie(movieId, userId);
+    const transaction = await this.moviesService.rentMovie(movieId, userId);
+    return {
+      data: {
+        id: transaction.id,
+        rentDate: transaction.rentDate,
+        movie: transaction.movie,
+      },
+      rentByUser: transaction.user.id,
+    };
   }
 
   @Post(':id/rent/return')
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
-  @HttpCode(200)
+  @HttpCode(204)
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'The movie has been successfuly return it.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
@@ -183,6 +193,14 @@ export class MoviesController {
   })
   async buyMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
     const userId = req.user.id;
-    await this.moviesService.purchaseMovie(movieId, userId);
+    const purchase = await this.moviesService.purchaseMovie(movieId, userId);
+    return {
+      data: {
+        id: purchase.id,
+        purchaseDate: purchase.rentDate,
+        movie: purchase.movie,
+      },
+      rentByUser: purchase.user.id,
+    };
   }
 }

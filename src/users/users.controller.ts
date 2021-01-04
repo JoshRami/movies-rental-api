@@ -19,6 +19,8 @@ import { UpdateUserRoleDto } from './dto/update.role.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
 import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
+import { AssociateEmailDto } from './dto/associate.email.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @ApiTags('Users')
 @Controller('users')
@@ -73,7 +75,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'The user has been successfully return it.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -86,6 +88,7 @@ export class UsersController {
   }
 
   @Post(':id/role')
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
   @ApiBearerAuth()
   @ApiResponse({
@@ -100,5 +103,25 @@ export class UsersController {
     @Body() updateUserRoleDto: UpdateUserRoleDto,
   ) {
     await this.userService.changeUserRole(id, updateUserRoleDto);
+  }
+
+  @Post('me/associate/email')
+  @HttpCode(204)
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: 204,
+    description: 'The email has been successfully associated.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async associateEmail(
+    @Req() req,
+    @Body()
+    associateEmailDto: AssociateEmailDto,
+  ) {
+    const id = req.user.id;
+    await this.userService.associateEmail(id, associateEmailDto);
   }
 }

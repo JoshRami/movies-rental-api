@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600&subset=cyrillic');
+
+    #client-email {
+      font-family: 'Open Sans', sans-serif;
+      width: 794px;
+      margin: 0 auto;
+      padding: 5px;
+      background-color:black;
+      line-height: 2;
+      font-weight: 300;
+    }
+
+    #email-head {
+      background-color: black;
+      display: flex;
+      align-items: center;
+      justify-content:space-between;
+      padding: 0 30px 5px;
+      height: 45px;
+    }
+
+    #client-email h2 {
+      color: white;
+      font-weight: 500;
+    }
+
+    #email-head img {
+      width: 200px;
+    }
+
+    #email-text {
+      background-color: white;
+      padding-top: 20px;
+    }
+
+    #client-email h3 {
+      text-transform: uppercase;
+      color: #4656A4;
+      font-weight: 500;
+    }
+
+    #client-email #info {
+      color: white;
+      background-color: #4656A4;
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 30px;
+    }
+
+    #client-email #info div p:first-of-type {
+      font-size: 14pt;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+
+    #client-email #info div p:last-of-type {
+      font-size: 10pt;
+      margin-top: 5px;
+    }
+
+    #client-email #info div:last-of-type {
+      width: 45%;
+    }
+
+    #client-email #order-num {
+      padding: 15px 30px 10px;
+      font-size: 13pt;
+    }
+
+    #client-email #order-num tr td:last-of-type,
+    #client-email #client-info tr td:last-of-type {
+      padding-left: 20px;
+    }
+
+    #client-email #client-info {
+      margin-left: 30px;
+      font-size: 13pt;
+      margin-bottom: 20px;
+    }
+
+    #email-text > h3 {
+      margin-left: 30px;
+      margin-bottom: 10px;
+    }
+
+    #client-email #order-item {
+      width: 100%;
+      padding: 0 30px;
+    }
+
+    #client-email #order-item tr:not(:first-of-type) {
+      outline: 1px solid #ccc;
+    }
+
+    #client-email #order-item img {
+      padding: 15px 20px 15px 10px;
+    }
+
+    #client-email #order-item h3 {
+      margin: 10px 0 5px;
+    }
+
+    #client-email #order-item #quantity {
+      border: 1px solid #ccc; 
+      width: 30px; 
+      height: 30px; 
+      display: flex; 
+      align-items:center;
+      justify-content: center;
+      margin-left: 30px;
+    }
+
+    #client-email #summary {
+      width: 100%;
+      text-align: right;
+      padding: 15px 30px 25px;
+      line-height: 1.3;
+    }
+
+    #client-email #summary span {
+      font-size: 20pt;
+      font-weight: 500;
+    }
+
+    #client-email #summary tr td:first-of-type {
+      color: #555;
+      vertical-align: bottom;
+      padding-bottom: 5px;
+    }
+
+    #client-email #title {
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    </style>
+</head>
+<body>
+
+<div id="client-email">
+<div id="email-head"><h2>Movie Rental</h2></div>
+  <div id="email-text">
+<table id="order-num" border="0">
+  <tbody>
+  <tr>
+     <td>
+       <b>💌 Dear {{username}}, thank you for your purchase 💌</b>
+     </td>
+  <tr>
+     <td>
+       <b>Movie:</b>
+     </td>
+     <td>
+        <span class="wmi-callto">{{movie.title}}</span>     </td>
+  </tr>
+  <tr>
+     <td>
+       <b>Price:</b>
+     </td>
+     <td>
+        <span class="wmi-callto">${{movie.salePrice}}</span>     </td>
+  </tr>  
+  <tr>
+     <td>
+       <b>Transaction Type:</b>
+     </td>
+     <td>
+        <span class="wmi-callto">{{transactionType}}</span>     </td>
+  </tr>
+  <tr>
+     <td>
+       <b>Transaction Date:</b>
+     </td>
+     <td>
+        {{rentDate}}     </td>
+  </tr>
+  </tbody>
+    </table>
+ </div>
+    
+
+</div>
+</body>
+</html>

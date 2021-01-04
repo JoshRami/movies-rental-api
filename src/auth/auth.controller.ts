@@ -25,7 +25,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: CredentialsDto })
   @Post('login')
-  @HttpCode(200)
+  @HttpCode(201)
   async login(@Req() req) {
     const user = req.user;
     const accessToken = await this.authService.login(user);

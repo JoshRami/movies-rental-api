@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
+import { AssociateEmailDto } from './dto/associate.email.dto';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserRoleDto } from './dto/update.role.dto';
@@ -24,6 +25,7 @@ export class UsersService {
     const newUser = this.userRepository.create(user);
     const role = await this.roleRepository.findOne({ role: Roles.Client });
     newUser.role = role;
+
     return await this.userRepository.save(newUser);
   }
 
@@ -101,5 +103,10 @@ export class UsersService {
     user.role = roleToChangeEntity;
     const updatedUser = await this.userRepository.save(user);
     return updatedUser;
+  }
+  async associateEmail(userId: number, email: AssociateEmailDto) {
+    const user = await this.userRepository.findOne(userId);
+    user.email = email.email;
+    await this.userRepository.save(user);
   }
 }
