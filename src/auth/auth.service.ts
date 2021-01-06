@@ -15,9 +15,9 @@ export class AuthService {
     private readonly tokensService: TokensService,
   ) {}
 
-  async validateUser(username: string, password: string): Promise<User> {
+  async validateUser(email: string, password: string): Promise<User> {
     const foundUser = await this.usersService.findByCredentials(
-      username,
+      email,
       password,
     );
     return foundUser;
@@ -27,10 +27,10 @@ export class AuthService {
     const tokenData = plainToClass(TokenDoc, user, {
       excludeExtraneousValues: true,
     });
-    const { username, sub } = tokenData;
+    const { sub } = tokenData;
 
     const accessToken = this.jwtService.sign(
-      { username, sub },
+      { sub },
       { secret: process.env.JWTSECRET },
     );
     const jwt: any = this.jwtService.decode(accessToken);

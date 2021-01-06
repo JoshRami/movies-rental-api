@@ -18,8 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = plainToClass(TokenDto, payload, {
       excludeExtraneousValues: true,
     });
-    const { username, id, role } = user;
-
-    return { username, id, role };
+    return { id: user.id };
   }
 }

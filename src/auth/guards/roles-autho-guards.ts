@@ -9,8 +9,8 @@ export class AdminsGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    await this.usersService.verifyAdmin(user.id);
+    const id = request.user.id;
+    await this.usersService.verifyAdmin(id);
     return true;
   }
 }

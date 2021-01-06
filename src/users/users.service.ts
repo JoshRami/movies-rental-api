@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { AssociateEmailDto } from './dto/associate.email.dto';
 import { CreateUserDto } from './dto/create.user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserRoleDto } from './dto/update.role.dto';
@@ -21,6 +20,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
   ) {}
+
   async createUser(user: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(user);
     const role = await this.roleRepository.findOne({ role: Roles.Client });
@@ -62,11 +62,11 @@ export class UsersService {
     return user;
   }
 
-  async findByCredentials(username: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ username, password });
+  async findByCredentials(email: string, password: string): Promise<User> {
+    const user = await this.userRepository.findOne({ email, password });
     if (!user) {
       throw new NotFoundException(
-        `User not found with the credentials: username: ${username}, password: ${password}`,
+        `User not found with the credentials: email: ${email}, password: ${password}`,
       );
     }
     return user;
@@ -103,10 +103,5 @@ export class UsersService {
     user.role = roleToChangeEntity;
     const updatedUser = await this.userRepository.save(user);
     return updatedUser;
-  }
-  async associateEmail(userId: number, email: AssociateEmailDto) {
-    const user = await this.userRepository.findOne(userId);
-    user.email = email.email;
-    await this.userRepository.save(user);
   }
 }

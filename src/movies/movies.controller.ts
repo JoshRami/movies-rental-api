@@ -15,7 +15,7 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { WhitelistGuard } from 'src/auth/guards/jwt-whitelist.guard';
 import { AdminsGuard } from 'src/auth/guards/roles-autho-guards';
-import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
+import { TagsToMovieDto } from './dto/tags-to-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MoviesService } from './movies.service';
@@ -147,9 +147,33 @@ export class MoviesController {
   })
   async attachTagsToMovie(
     @Param('id', ParseIntPipe) movieId: number,
-    @Body() addTagsToMovieDto: AddTagsToMovieDto,
+    @Body() tagsToMovieDto: TagsToMovieDto,
   ) {
-    await this.moviesService.assingTags(movieId, addTagsToMovieDto);
+    await this.moviesService.assingTags(movieId, tagsToMovieDto);
+  }
+
+  @Delete(':id/tags')
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, WhitelistGuard, AdminsGuard)
+  @ApiResponse({
+    status: 204,
+    description: 'The tags has been successfully deleted to the movie.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Movie not found' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have  submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description:
+      'Error while interacting with the database, hint: please check you are not trying to submit data fields wich are uniques',
+  })
+  async detachTagsToMovie(
+    @Param('id', ParseIntPipe) movieId: number,
+    @Body() tagsToMovieDto: TagsToMovieDto,
+  ) {
+    await this.moviesService.unassingTags(movieId, tagsToMovieDto);
   }
 
   @Post(':id/rent')
@@ -246,7 +270,7 @@ export class MoviesController {
         purchaseDate: purchase.rentDate,
         movie: purchase.movie,
       },
-      rentByUser: purchase.user.id,
+      buyerUserId: purchase.user.id,
     };
   }
 }

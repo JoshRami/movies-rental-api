@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TagsService } from '../tags/tags.service';
 
 import { Repository } from 'typeorm';
-import { AddTagsToMovieDto } from './dto/add-tags-movie.dto';
+import { TagsToMovieDto } from './dto/tags-to-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { Movie } from './movies.entity';
@@ -61,7 +61,9 @@ export class MoviesService {
   }
 
   async getMovie(id: number): Promise<Movie> {
-    const movie = await this.moviesRepository.findOne(id);
+    const movie = await this.moviesRepository.findOne(id, {
+      relations: ['tags'],
+    });
     if (!movie) {
       throw new NotFoundException(`Movie not found, id: ${id}`);
     }
@@ -76,7 +78,7 @@ export class MoviesService {
     return movies;
   }
 
-  async assingTags(id: number, addTagsToMovieDto: AddTagsToMovieDto) {
+  async assingTags(id: number, addTagsToMovieDto: TagsToMovieDto) {
     const movie = await this.moviesRepository.findOne(id, {
       relations: ['tags'],
     });
@@ -84,6 +86,19 @@ export class MoviesService {
     const tags = await this.tagsService.getTagsByIds(tagsIds);
 
     movie.tags.push(...tags);
+    await this.moviesRepository.save(movie);
+  }
+
+  async unassingTags(id: number, addTagsToMovieDto: TagsToMovieDto) {
+    const movie = await this.moviesRepository.findOne(id, {
+      relations: ['tags'],
+    });
+    const tagsIds = addTagsToMovieDto.tagsIds;
+
+    movie.tags = movie.tags.filter((tag) => {
+      return !tagsIds.includes(tag.id);
+    });
+
     await this.moviesRepository.save(movie);
   }
 
@@ -100,7 +115,6 @@ export class MoviesService {
       movie,
     );
     movie.stock -= 1;
-
     await this.moviesRepository.save(movie);
     if (user.email) {
       await this.mailerService.sendMail({
@@ -109,7 +123,7 @@ export class MoviesService {
         template: 'transaction',
         subject: 'Transaction summary - Movie Rental ✔',
         context: {
-          usermame: user.username,
+          email: user.email,
           movie,
           transactionType: 'Rental',
           rentDate: transaction.rentDate,
@@ -150,7 +164,7 @@ export class MoviesService {
         template: 'transaction',
         subject: 'Transaction summary - Movie Rental ✔',
         context: {
-          username: user.username,
+          email: user.email,
           movie,
           transactionType: 'Purchase',
           rentDate: purchase.rentDate,

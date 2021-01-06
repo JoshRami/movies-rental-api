@@ -46,7 +46,7 @@ describe('MoviesService', () => {
   };
 
   const mockMailerServices = {
-    sendEmail: jest.fn().mockReturnValue(undefined),
+    sendMail: jest.fn().mockReturnValue(undefined),
   };
 
   beforeEach(async () => {
@@ -133,7 +133,7 @@ describe('MoviesService', () => {
       const id = MoviesMock.mockMovieModel.id;
       const movie = await service.getMovie(id);
 
-      expect(mockRepo.findOne).toBeCalledWith(id);
+      expect(mockRepo.findOne).toBeCalledWith(id, { relations: ['tags'] });
       expect(movie).toBe(MoviesMock.mockMovieModel);
     });
 
@@ -171,6 +171,17 @@ describe('MoviesService', () => {
       mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
       const id = MoviesMock.mockMovieModel.id;
       await service.assingTags(id, { tagsIds: [1, 2] });
+    });
+  });
+
+  describe('When unassigning tags to movies', () => {
+    it('should delete tags to movie, by tags ids', async () => {
+      mockRepo.findOne = jest.fn().mockReturnValue(MoviesMock.mockMovieModel);
+      const movieModelTagOneUnassigned = MoviesMock.mockMovieModel;
+      movieModelTagOneUnassigned.tags.pop();
+      const id = MoviesMock.mockMovieModel.id;
+      await service.unassingTags(id, { tagsIds: [2] });
+      expect(mockRepo.save).toBeCalledWith(movieModelTagOneUnassigned);
     });
   });
 

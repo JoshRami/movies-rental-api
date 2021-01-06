@@ -16,14 +16,11 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  username: string;
+  @Column({ unique: true, nullable: true })
+  email?: string;
 
   @Column()
   password: string;
-
-  @Column({ unique: true, nullable: true })
-  email?: string;
 
   @OneToMany(() => Token, (token) => token.user)
   tokens: Token[];

@@ -128,18 +128,18 @@ describe('UsersService', () => {
     it('should get a user', async () => {
       mockUserRepo.findOne = jest.fn().mockReturnValue(UserMocks.mockUserModel);
 
-      const { username, password } = UserMocks.credentials;
-      const user = await service.findByCredentials(username, password);
+      const { email, password } = UserMocks.credentials;
+      const user = await service.findByCredentials(email, password);
 
-      expect(mockUserRepo.findOne).toBeCalledWith({ username, password });
+      expect(mockUserRepo.findOne).toBeCalledWith({ email, password });
       expect(user).toBe(UserMocks.mockUserModel);
     });
 
     it('should throw when user is not found', async () => {
       mockUserRepo.findOne = jest.fn().mockReturnValue(undefined);
-      const { username, password } = UserMocks.credentials;
+      const { email, password } = UserMocks.credentials;
       try {
-        await service.findByCredentials(username, password);
+        await service.findByCredentials(email, password);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
       }

@@ -38,17 +38,17 @@ describe('AuthService', () => {
 
   describe('While validating an user,', () => {
     it('should return a validated user', async () => {
-      const { username, password } = mockUserModel;
-      const user = await service.validateUser(username, password);
+      const { email, password } = mockUserModel;
+      const user = await service.validateUser(email, password);
       expect(user).toBe(mockUserModel);
     });
   });
 
   describe('While loging', () => {
     it('should return an access token', async () => {
-      const { username, id } = mockUserModel;
+      const { email, id } = mockUserModel;
 
-      const token = await service.login({ username, id });
+      const token = await service.login({ email, id });
       expect(token).toBe(TokenMocks.token.token);
     });
   });

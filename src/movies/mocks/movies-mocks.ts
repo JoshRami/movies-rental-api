@@ -16,7 +16,10 @@ export const mockAddMovie: CreateMovieDto = {
 export const mockMovieModel: Movie = {
   id: 1,
   ...mockAddMovie,
-  tags: [] as Tag[],
+  tags: [
+    { id: 1, tag: 'action', movies: undefined },
+    { id: 2, tag: 'funny', movies: undefined },
+  ],
 };
 
 export const mockMovieModelNoStock: Movie = {

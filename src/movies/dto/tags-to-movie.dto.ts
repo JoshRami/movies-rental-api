@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 
-export class AddTagsToMovieDto {
+export class TagsToMovieDto {
   @ApiProperty({
     description: 'tags ids to assign to any movie',
     type: 'integer',

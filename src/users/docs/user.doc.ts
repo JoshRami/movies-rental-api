@@ -2,7 +2,7 @@ import { Expose } from 'class-transformer';
 
 export class UserDoc {
   @Expose()
-  username: string;
+  email: string;
 
   @Expose()
   id: number;
