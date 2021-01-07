@@ -43,15 +43,13 @@ export class MoviesService {
     return affected === IS_AFFECTED;
   }
 
-  async updateMovies(
-    id: number,
-    updateUserDto: UpdateMovieDto,
-  ): Promise<Movie> {
+  async updateMovie(id: number, updateUserDto: UpdateMovieDto): Promise<Movie> {
     const movie = await this.moviesRepository.findOne(id);
 
     if (!movie) {
       throw new NotFoundException('The movie to update is not found');
     }
+
     const updated = await this.moviesRepository.save({
       ...movie,
       ...updateUserDto,
@@ -72,7 +70,7 @@ export class MoviesService {
 
   async getMovies(): Promise<Movie[]> {
     const movies = await this.moviesRepository.find({ order: { title: 1 } });
-    if (!movies) {
+    if (!movies.length) {
       throw new NotFoundException('Movies not found');
     }
     return movies;

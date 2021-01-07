@@ -85,7 +85,7 @@ export class MoviesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateMovieDto,
   ) {
-    const updatedMovie = await this.moviesService.updateMovies(
+    const updatedMovie = await this.moviesService.updateMovie(
       id,
       updateUserDto,
     );

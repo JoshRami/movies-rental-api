@@ -17,9 +17,9 @@ export class Rent {
   })
   rentDate: Date;
 
-  @ManyToOne(() => Movie, (movie) => movie.rents)
+  @ManyToOne(() => Movie, (movie) => movie.rents, { onDelete: 'CASCADE' })
   movie: Movie;
 
-  @ManyToOne(() => User, (user) => user.rents)
+  @ManyToOne(() => User, (user) => user.rents, { onDelete: 'CASCADE' })
   user: User;
 }
