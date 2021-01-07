@@ -23,6 +23,7 @@ export class RentsService {
     const newRentTransaction = this.rentRepository.create({
       user: userRenting,
       movie: movieToRent,
+      rentPrice: movieToRent.salePrice,
     });
     return await this.rentRepository.save(newRentTransaction);
   }

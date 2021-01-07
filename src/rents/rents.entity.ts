@@ -1,5 +1,6 @@
 import { Movie } from '../movies/movies.entity';
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -16,6 +17,9 @@ export class Rent {
     name: 'rentDate',
   })
   rentDate: Date;
+
+  @Column()
+  rentPrice: number;
 
   @ManyToOne(() => Movie, (movie) => movie.rents, { onDelete: 'CASCADE' })
   movie: Movie;

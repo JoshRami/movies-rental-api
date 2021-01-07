@@ -5,6 +5,7 @@ import { Rent } from '../rents.entity';
 export const mockRentTransaction = {
   movie: mockMovieModel,
   user: mockUserModel,
+  rentPrice: 10,
   rentDate: new Date('2000'),
 };
 

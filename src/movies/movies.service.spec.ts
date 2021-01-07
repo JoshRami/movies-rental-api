@@ -107,7 +107,7 @@ describe('MoviesService', () => {
         .fn()
         .mockReturnValue(MoviesMock.mockUpdatedMovieModel);
       const id = MoviesMock.mockMovieModel.id;
-      const userUpdated = await service.updateMovies(
+      const userUpdated = await service.updateMovie(
         id,
         MoviesMock.mockUpdateMovieParams,
       );
@@ -119,7 +119,7 @@ describe('MoviesService', () => {
     it('should throw error when movie to update is not found', async () => {
       mockRepo.findOne = jest.fn().mockReturnValue(undefined);
       try {
-        await service.updateMovies(1, MoviesMock.mockUpdateMovieParams);
+        await service.updateMovie(1, MoviesMock.mockUpdateMovieParams);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('The movie to update is not found');
@@ -151,12 +151,13 @@ describe('MoviesService', () => {
 
   describe('When getting movies', () => {
     it('should get movies', async () => {
+      mockRepo.find = jest.fn().mockReturnValue(MoviesMock.mockMovies.movies);
       const movies = await service.getMovies();
-      expect(movies).toBe(MoviesMock.mockMovies);
+      expect(movies).toBe(MoviesMock.mockMovies.movies);
     });
 
     it('should throw error when there are not any movies', async () => {
-      mockRepo.find = jest.fn().mockReturnValue(undefined);
+      mockRepo.find = jest.fn().mockReturnValue([]);
       try {
         await service.getMovies();
       } catch (error) {
