@@ -65,4 +65,19 @@ describe('TokensService', () => {
       expect(affected).toBe(true);
     });
   });
+
+  describe('While deleting expired tokens', () => {
+    it('should delete token', async () => {
+      await service.deleteExpiredTokens();
+    });
+
+    it('should throw error when tokens cannot be deleted', async () => {
+      console.error = jest.fn();
+      mockRepo.delete = jest.fn().mockRejectedValue(new Error());
+      await service.deleteExpiredTokens();
+      expect(console.error).toBeCalledWith(
+        'error while deleting expired tokens',
+      );
+    });
+  });
 });

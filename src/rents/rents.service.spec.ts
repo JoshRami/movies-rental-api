@@ -5,7 +5,7 @@ import { RentsService } from './rents.service';
 import * as RentsMocks from './mocks/rents.mocks';
 import { mockUserModel } from '../users/mocks/user-mocks';
 import { mockMovieModel } from '../movies/mocks/movies-mocks';
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('RentsService', () => {
   let service: RentsService;
@@ -55,16 +55,39 @@ describe('RentsService', () => {
 
   describe('While deleting a rent transaction', () => {
     it('should delete a transaction', async () => {
-      await service.deleteRentTransaction(mockUserModel, mockMovieModel);
+      await service.deleteRentTransaction(1);
     });
 
     it('should throw an error the deleting proccess could not be delete', async () => {
       try {
         mockRepo.delete = jest.fn().mockReturnValue({ affected: 0 });
-        await service.deleteRentTransaction(mockUserModel, mockMovieModel);
+        await service.deleteRentTransaction(1);
       } catch (error) {
         expect(error).toBeInstanceOf(ConflictException);
         expect(error.message).toBe('The rent transaction appears to not exist');
+      }
+    });
+  });
+
+  describe('While getting a transaction by id', () => {
+    it('should return the rent transaction', async () => {
+      mockRepo.findOne = jest
+        .fn()
+        .mockReturnValue(RentsMocks.mockRentTransactionModel);
+
+      const transactionId = RentsMocks.mockRentTransactionModel.id;
+      const transaction = await service.getRentTransactionById(transactionId);
+      expect(transaction).toBe(RentsMocks.mockRentTransactionModel);
+    });
+
+    it('should throw error when transaction not exists', async () => {
+      try {
+        mockRepo.findOne = jest.fn().mockReturnValue(undefined);
+        const transactionId = RentsMocks.mockRentTransactionModel.id;
+        await service.getRentTransactionById(transactionId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('The rent transaction does not exists');
       }
     });
   });

@@ -38,6 +38,7 @@ describe('MoviesService', () => {
   const mockRentsServices = {
     insertRentTransaction: jest.fn().mockReturnValue(mockRentTransactionModel),
     deleteRentTransaction: jest.fn().mockReturnValue({ affected: 1 }),
+    getRentTransactionById: jest.fn().mockReturnValue(mockRentTransactionModel),
   };
   const mockPurchasesServices = {
     insertPurchaseTransaction: jest
@@ -236,6 +237,20 @@ describe('MoviesService', () => {
 
       const movie = await service.returnMovie(movieId, userId);
       expect(movie.stock).toBe(MoviesMock.mockMovieModel.stock + 1);
+    });
+
+    it('should throw error when the user returning the movie is not the owner of the transaction ', async () => {
+      const movieId = MoviesMock.mockMovieModel.id;
+      const noOwnerUserId = 1e5;
+
+      try {
+        await service.returnMovie(movieId, noOwnerUserId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe(
+          'The user is not the owner of the rent transaction',
+        );
+      }
     });
   });
 

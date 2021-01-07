@@ -210,7 +210,7 @@ export class MoviesController {
     };
   }
 
-  @Post(':id/rent/return')
+  @Post('rent/:id/return')
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
   @HttpCode(204)
@@ -231,11 +231,11 @@ export class MoviesController {
     description: 'Error while interacting with the database',
   })
   async returnRentedMovie(
-    @Param('id', ParseIntPipe) movieId: number,
+    @Param('id', ParseIntPipe) rentId: number,
     @Req() req,
   ) {
     const userId = req.user.id;
-    await this.moviesService.returnMovie(movieId, userId);
+    await this.moviesService.returnMovie(rentId, userId);
   }
 
   @Post(':id/buy')

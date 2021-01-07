@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from 'src/movies/movies.entity';
 import { User } from 'src/users/users.entity';
@@ -28,14 +32,19 @@ export class RentsService {
     return await this.rentRepository.save(newRentTransaction);
   }
 
-  async deleteRentTransaction(user: User, movieRented: Movie) {
+  async deleteRentTransaction(rentId: number) {
     const NOT_AFFECTED = 0;
-    const { affected } = await this.rentRepository.delete({
-      user,
-      movie: movieRented,
-    });
+    const { affected } = await this.rentRepository.delete(rentId);
     if (NOT_AFFECTED === affected) {
       throw new ConflictException('The rent transaction appears to not exist');
     }
+  }
+
+  async getRentTransactionById(rentId: number) {
+    const rentTransaction = await this.rentRepository.findOne(rentId);
+    if (!rentTransaction) {
+      throw new NotFoundException('The rent transaction does not exists');
+    }
+    return rentTransaction;
   }
 }

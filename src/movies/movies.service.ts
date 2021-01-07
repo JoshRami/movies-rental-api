@@ -129,12 +129,19 @@ export class MoviesService {
     return transaction;
   }
 
-  async returnMovie(movieId: number, userId: number) {
-    const movie = await this.moviesRepository.findOne(movieId);
-    const user = await this.usersService.getUser(userId);
-    await this.rentsService.deleteRentTransaction(user, movie);
-    movie.stock += 1;
+  async returnMovie(rentId: number, userId: number) {
+    const rentTransaction = await this.rentsService.getRentTransactionById(
+      rentId,
+    );
+    if (userId !== rentTransaction.user.id) {
+      throw new BadRequestException(
+        'The user is not the owner of the rent transaction',
+      );
+    }
+    await this.rentsService.deleteRentTransaction(rentId);
 
+    const movie = await this.moviesRepository.findOne(rentTransaction.movie.id);
+    movie.stock += 1;
     return await this.moviesRepository.save(movie);
   }
 
