@@ -116,20 +116,18 @@ export class MoviesService {
     );
     movie.stock -= 1;
     await this.moviesRepository.save(movie);
-    if (user.email) {
-      await this.mailerService.sendMail({
-        to: user.email,
-        from: 'ia.josuequinteros@ufg.edu.sv',
-        template: 'transaction',
-        subject: 'Transaction summary - Movie Rental ✔',
-        context: {
-          email: user.email,
-          movie,
-          transactionType: 'Rental',
-          rentDate: transaction.rentDate,
-        },
-      });
-    }
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: 'ia.josuequinteros@ufg.edu.sv',
+      template: 'transaction',
+      subject: 'Transaction summary - Movie Rental ✔',
+      context: {
+        email: user.email,
+        movie,
+        transactionType: 'Rental',
+        rentDate: transaction.rentDate,
+      },
+    });
     return transaction;
   }
 
@@ -157,20 +155,18 @@ export class MoviesService {
     movie.stock -= 1;
 
     await this.moviesRepository.save(movie);
-    if (user.email) {
-      await this.mailerService.sendMail({
-        to: user.email,
-        from: 'ia.josuequinteros@ufg.edu.sv',
-        template: 'transaction',
-        subject: 'Transaction summary - Movie Rental ✔',
-        context: {
-          email: user.email,
-          movie,
-          transactionType: 'Purchase',
-          rentDate: purchase.rentDate,
-        },
-      });
-    }
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: 'ia.josuequinteros@ufg.edu.sv',
+      template: 'transaction',
+      subject: 'Transaction summary - Movie Rental ✔',
+      context: {
+        email: user.email,
+        movie,
+        transactionType: 'Purchase',
+        rentDate: purchase.rentDate,
+      },
+    });
 
     return purchase;
   }
