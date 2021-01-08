@@ -1,38 +1,26 @@
-# Movie Rental API
+## Week 9 requiriments
 
-The homework for this week consists of the creation of a small movie rental API(it'll be continued on the next week)
+This homework is the continuation of last week's homework.
 
-1. Follow best REST API practices
-2. Use the Design patterns you think can improve your code readability or will improve your code stability
-3. Try to avoid anti-patterns
-4. PostgreSQL will be the DB to use
-5. You should provide a DB dump to test your API, along with a Postman collection to allow us to test your API on our local
-6. When doing the Unit/Integration test, make sure to follow the best API Testing practices.
-   10 Decide, whether or not, to use the same DB for your unit tests, or use a mocking library.
-7. Extra points are optional, as always. Work on them if you finish earlier!
+Please as previous project, work on this on a new branch, and create an MR of the new branch towards the previous week work. Send both the repo and the link to the MR so we can see what has changed from the last week's work.
 
-### Base requirements
+Base requirements
 
-- [x] API should allow CRUD operations on movies (add, remove, update, create movies)
-- [x] API should allow CRUD operations on users (add, remove, update, create users)
-- [x] Each movie should have a list of tags related to them
-- [x] Each movie should have a title, description, a poster, stock, a link to its trailer, sale price, likes and availability
-- [x] API should have one admin by default
-- [x] If a user is admin or not should be handled by its Role. A user must have one Role (admin or client)
-- [x] A client can rent a movie, return it or buy it.
-- [x] Users should be able to get a list of movies (sorted alphabetically)
-- [x] Add unit/integration tests (coverage must be 65% min)
+- [ ] Users should be able to retrieve a list of movies sorted by Name or likes.
+- [ ] Users can filter the list by name, availability or tags (by default, all users should see only available movies).
+  - [ ] Request can combine these filters and sorters. So for example, If I query for movies with tags comedy | action and, whose name is avengers, and I sort them by likes, I've should get a movie (or a list of them!) who matches all of that criteria (if any!).
+- [ ] Users can see all the movies they have rented/bought
+- [ ] Admins can change a users' roles
+- [ ] A user should be able to buy/rent more than one movie on a single request
+- [ ] An email should be sent when a user requests to buy/rent movies. This email should contain all the information related to its order.
+- [ ] Users can change their password or reset it. (Change a password implies the user is logged in & knows his current password. Reset means that he no longer remembers which his password was)
+- [ ] When resetting a password, a user should receive an email with instructions to do it
+- [ ] The Nest.JS project should be Dockerized
+- [ ] Increase testing coverage to 80% (unit/integration)
+- [ ] Document your endpoints using Swagger
 
-### Security requirements
+Extra points!
 
-- [x] Any person (logged in or not) can view a list of available movies
-- [x] Any person can see a movie's details
-- [x] Only admins can add/modify/remove movies
-- [x] Only logged in users can buy/rent a movie
-- [x] Logging/logout should be done using JWT
-- [x] Only admins should be able to add/remove tags
-
-### Extra points
-
-- [x] Send an email when a user rent/buy a movie with important information!
-- [x] Allow an admin to change a user's role (from client to admin and viceversa)
+- [ ] Deploy your API to Heroku!
+- [ ] Create a Docker compose file which sets up the Database & the NestJS project
+- [x] Create a Git hook which lints & tests your API on each commit
