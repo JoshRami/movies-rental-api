@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import { TagsToMovieDto } from './dto/tags-to-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MoviesService } from './movies.service';
+import { MovieParamsDto } from './dto/query.params.movies.dto';
 
 @ApiTags('Movies')
 @Controller('movies')
@@ -105,8 +107,8 @@ export class MoviesController {
     status: 422,
     description: 'Error while interacting with the database',
   })
-  async getMovies() {
-    const movies = await this.moviesService.getMovies();
+  async getMovies(@Query() query: MovieParamsDto) {
+    const movies = await this.moviesService.getMovies(query);
     return { data: movies };
   }
 

@@ -18,6 +18,7 @@ import { PurchasesService } from '../purchases/purchases.service';
 import { mockUserModel } from '../users/mocks/user-mocks';
 import { mockRentTransactionModel } from '../rents/mocks/rents.mocks';
 import { MailerService } from '@nestjs-modules/mailer';
+import { SortingOptionsEnum } from './enums/sorting.enum';
 
 describe('MoviesService', () => {
   let service: MoviesService;
@@ -151,16 +152,54 @@ describe('MoviesService', () => {
   });
 
   describe('When getting movies', () => {
-    it('should get movies', async () => {
+    it('should get movies when movies found and not tags filters passed', async () => {
       mockRepo.find = jest.fn().mockReturnValue(MoviesMock.mockMovies.movies);
-      const movies = await service.getMovies();
+      const movies = await service.getMovies({
+        sortBy: undefined,
+        title: undefined,
+        tags: [],
+        availability: undefined,
+      });
       expect(movies).toBe(MoviesMock.mockMovies.movies);
+    });
+
+    it('should get movies when movies found and the tags filters passed are in movies', async () => {
+      mockRepo.find = jest.fn().mockReturnValue(MoviesMock.mockMovies.movies);
+      const tagInMovieModel = MoviesMock.mockMovies.movies[0].tags[0].tag;
+      const movies = await service.getMovies({
+        sortBy: undefined,
+        title: undefined,
+        tags: [tagInMovieModel],
+        availability: undefined,
+      });
+      expect(movies).toStrictEqual(MoviesMock.mockMovies.movies);
     });
 
     it('should throw error when there are not any movies', async () => {
       mockRepo.find = jest.fn().mockReturnValue([]);
       try {
-        await service.getMovies();
+        await service.getMovies({
+          sortBy: undefined,
+          title: undefined,
+          tags: [],
+          availability: undefined,
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('Movies not found');
+      }
+    });
+
+    it('should throw error when there are movies but tags filters params passed are not in the found movies', async () => {
+      mockRepo.find = jest.fn().mockReturnValue(MoviesMock.mockMovies.movies);
+      const nonExistingTagInMovieModel = 'lorem';
+      try {
+        await service.getMovies({
+          sortBy: undefined,
+          title: undefined,
+          tags: [nonExistingTagInMovieModel],
+          availability: undefined,
+        });
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Movies not found');
@@ -294,6 +333,41 @@ describe('MoviesService', () => {
           'The movie is not available or there are not stock',
         );
       }
+    });
+  });
+
+  describe('When turning a sort query param to sort query', () => {
+    it('should return the sort by ascending likes query', () => {
+      const sortByQuery = service.getSortByParam(
+        SortingOptionsEnum.LIKES_ASCENDING,
+      );
+      expect(sortByQuery).toStrictEqual({ likes: 'ASC' });
+    });
+
+    it('should return the sort by descending likes query', () => {
+      const sortByQuery = service.getSortByParam(
+        SortingOptionsEnum.LIKES_DESCENDING,
+      );
+      expect(sortByQuery).toStrictEqual({ likes: 'DESC' });
+    });
+
+    it('should return the sort by ascending title query ', () => {
+      const sortByQuery = service.getSortByParam(
+        SortingOptionsEnum.NAMES_ASCENDING,
+      );
+      expect(sortByQuery).toStrictEqual({ title: 'ASC' });
+    });
+
+    it('should return the sort by descending title query', () => {
+      const sortByQuery = service.getSortByParam(
+        SortingOptionsEnum.NAMES_DESCENDING,
+      );
+      expect(sortByQuery).toStrictEqual({ title: 'DESC' });
+    });
+
+    it('should return the default query no sort query param passed', () => {
+      const sortByQuery = service.getSortByParam('');
+      expect(sortByQuery).toStrictEqual({ title: 'DESC' });
     });
   });
 });

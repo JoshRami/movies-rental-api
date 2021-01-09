@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagsService } from '../tags/tags.service';
 
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { TagsToMovieDto } from './dto/tags-to-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -16,6 +16,8 @@ import { UsersService } from '../users/users.service';
 import { RentsService } from '../rents/rents.service';
 import { PurchasesService } from '../purchases/purchases.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { MovieParamsDto } from './dto/query.params.movies.dto';
+import { SortingOptionsEnum } from './enums/sorting.enum';
 
 @Injectable()
 export class MoviesService {
@@ -68,12 +70,38 @@ export class MoviesService {
     return movie;
   }
 
-  async getMovies(): Promise<Movie[]> {
-    const movies = await this.moviesRepository.find({ order: { title: 1 } });
+  async getMovies(query: MovieParamsDto): Promise<Movie[]> {
+    const availability = query.availability ?? true;
+    const title = query.title ?? '';
+    const tagsFilters = query.tags ?? [];
+    const sortBy = query.sortBy ?? '';
+
+    const sortByQuery = this.getSortByParam(sortBy);
+
+    const movies = await this.moviesRepository.find({
+      relations: ['tags'],
+      order: sortByQuery,
+      where: { availability, title: Like(`%${title}%`) },
+    });
+
     if (!movies.length) {
       throw new NotFoundException('Movies not found');
     }
-    return movies;
+    if (movies.length && !tagsFilters.length) {
+      return movies;
+    }
+
+    const filterByTagsMovies = movies.filter((movie) => {
+      const movieTags = movie.tags.map((tag) => tag.tag);
+      return tagsFilters.every((tag) => {
+        return movieTags.includes(tag);
+      });
+    });
+
+    if (!filterByTagsMovies.length) {
+      throw new NotFoundException('Movies not found');
+    }
+    return filterByTagsMovies;
   }
 
   async assingTags(id: number, addTagsToMovieDto: TagsToMovieDto) {
@@ -174,5 +202,27 @@ export class MoviesService {
     });
 
     return purchase;
+  }
+
+  getSortByParam(sortBy: string) {
+    let sortByQuery;
+    switch (sortBy) {
+      case SortingOptionsEnum.NAMES_ASCENDING:
+        sortByQuery = { title: 'ASC' };
+        break;
+      case SortingOptionsEnum.NAMES_DESCENDING:
+        sortByQuery = { title: 'DESC' };
+        break;
+      case SortingOptionsEnum.LIKES_ASCENDING:
+        sortByQuery = { likes: 'ASC' };
+        break;
+      case SortingOptionsEnum.LIKES_DESCENDING:
+        sortByQuery = { likes: 'DESC' };
+        break;
+      default:
+        sortByQuery = { title: 'DESC' };
+        break;
+    }
+    return sortByQuery;
   }
 }
