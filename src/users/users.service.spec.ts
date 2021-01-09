@@ -212,4 +212,28 @@ describe('UsersService', () => {
       expect(updatedUser.role.role).toBe(Roles.Admin);
     });
   });
+
+  describe('When changing an user password', () => {
+    it('should change the user password', async () => {
+      mockUserRepo.findOne = jest.fn().mockReturnValue(UserMocks.mockUserModel);
+      const userId = UserMocks.mockUserModel.id;
+      const newPassword = UserMocks.mockUpdatedUserModel.password;
+
+      await service.changeUserPassword(userId, newPassword);
+      expect(mockUserRepo.save).toBeCalledWith(UserMocks.mockUpdatedUserModel);
+    });
+    it('should throwh erro when password to change is the same', async () => {
+      mockUserRepo.findOne = jest.fn().mockReturnValue(UserMocks.mockUserModel);
+      const userId = UserMocks.mockUserModel.id;
+      const newPassword = UserMocks.mockUserModel.password;
+      try {
+        await service.changeUserPassword(userId, newPassword);
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe(
+          'The password to change has to be different from the actual one',
+        );
+      }
+    });
+  });
 });

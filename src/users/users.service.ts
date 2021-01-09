@@ -104,4 +104,16 @@ export class UsersService {
     const updatedUser = await this.userRepository.save(user);
     return updatedUser;
   }
+
+  async changeUserPassword(userId: number, changePasswordDto: string) {
+    const user = await this.userRepository.findOne(userId);
+
+    if (user.password === changePasswordDto) {
+      throw new BadRequestException(
+        'The password to change has to be different from the actual one',
+      );
+    }
+    user.password = changePasswordDto;
+    await this.userRepository.save(user);
+  }
 }

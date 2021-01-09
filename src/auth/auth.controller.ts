@@ -1,8 +1,16 @@
-import { Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { TokensService } from 'src/tokens/tokens.service';
 import { AuthService } from './auth.service';
+import { ChangePasswordDto } from './dtos/change.password.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { WhitelistGuard } from './guards/jwt-whitelist.guard';
@@ -58,5 +66,28 @@ export class AuthController {
   async logout(@Req() req: Request) {
     const accessToken = req.get('Authorization').split(' ')[1];
     await this.tokenService.deleteToken(accessToken);
+  }
+
+  @Post('password/change')
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiResponse({
+    status: 204,
+    description: 'The password has been successfully change.',
+  })
+  @ApiResponse({ status: 401, description: 'Invalid token' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({ status: 400, description: 'You have submitted wrong data' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
+  async changePassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() req,
+  ) {
+    const userId = req.user.id;
+    await this.authService.changeUserPassword(userId, changePasswordDto);
   }
 }

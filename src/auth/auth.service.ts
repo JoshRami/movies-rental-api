@@ -6,6 +6,7 @@ import { TokenDoc } from './docs/token.doc';
 import { User } from '../users/users.entity';
 import { plainToClass } from 'class-transformer';
 import { UserDoc } from '../users/docs/user.doc';
+import { ChangePasswordDto } from './dtos/change.password.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,5 +37,13 @@ export class AuthService {
     const jwt: any = this.jwtService.decode(accessToken);
     const token = await this.tokensService.saveToken(accessToken, sub, jwt.exp);
     return token.token;
+  }
+
+  async changeUserPassword(
+    userId: number,
+    changePasswordDto: ChangePasswordDto,
+  ) {
+    const passwordToChange = changePasswordDto.password;
+    await this.usersService.changeUserPassword(userId, passwordToChange);
   }
 }
