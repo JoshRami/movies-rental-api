@@ -3,6 +3,7 @@ import {
   Controller,
   HttpCode,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -12,9 +13,11 @@ import { TokensService } from 'src/tokens/tokens.service';
 import { AuthService } from './auth.service';
 import { ChangePasswordDto } from './dtos/change.password.dto';
 import { CredentialsDto } from './dtos/credentials.dto';
+import { AskResetPasswordDto } from './dtos/ask.reset.password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { WhitelistGuard } from './guards/jwt-whitelist.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { ResetPasswordDto } from './dtos/reset.password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -68,7 +71,7 @@ export class AuthController {
     await this.tokenService.deleteToken(accessToken);
   }
 
-  @Post('password/change')
+  @Put('/me/password/change')
   @HttpCode(204)
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard, WhitelistGuard)
@@ -89,5 +92,48 @@ export class AuthController {
   ) {
     const userId = req.user.id;
     await this.authService.changeUserPassword(userId, changePasswordDto);
+  }
+
+  @Post('/me/password/reset')
+  @HttpCode(202)
+  @ApiResponse({
+    status: 202,
+    description:
+      'The reset password token has been successfully generated and a email has been sent',
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 400,
+    description:
+      'You have submitted wrong data or email is not associated with an existing user',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
+  async generatePasswordResetCode(
+    @Body() askResetPasswordDto: AskResetPasswordDto,
+  ) {
+    await this.authService.askResetPassword(askResetPasswordDto);
+  }
+
+  @Put('/me/password/reset/set-password')
+  @HttpCode(204)
+  @ApiResponse({
+    status: 204,
+    description: 'The password has been successfully changed ',
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 400,
+    description:
+      'You have submitted wrong data or email is not associated with an existing user',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
+  async setPasswordByResetCode(@Body() resetPasswordDto: ResetPasswordDto) {
+    await this.authService.resetPassword(resetPasswordDto);
   }
 }

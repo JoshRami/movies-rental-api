@@ -236,4 +236,26 @@ describe('UsersService', () => {
       }
     });
   });
+
+  describe('When getting an user by email', () => {
+    it('should get the user by email', async () => {
+      mockUserRepo.findOne = jest.fn().mockReturnValue(UserMocks.mockUserModel);
+
+      const { email } = UserMocks.credentials;
+      const user = await service.getUserByEmail(email);
+
+      expect(mockUserRepo.findOne).toBeCalledWith({ email });
+      expect(user).toBe(UserMocks.mockUserModel);
+    });
+
+    it('should throw when user is not found', async () => {
+      mockUserRepo.findOne = jest.fn().mockReturnValue(undefined);
+      const { email } = UserMocks.credentials;
+      try {
+        await service.getUserByEmail(email);
+      } catch (error) {
+        expect(error).toBeInstanceOf(NotFoundException);
+      }
+    });
+  });
 });

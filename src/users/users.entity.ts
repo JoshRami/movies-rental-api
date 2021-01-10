@@ -10,6 +10,7 @@ import {
 import { Role } from '../users/roles/role.entity';
 import { Rent } from '../rents/rents.entity';
 import { Purchase } from '../purchases/purchases.entity';
+import { PasswordToken } from '../auth/password-tokens/passwords-token.entity';
 
 @Entity()
 export class User {
@@ -27,10 +28,13 @@ export class User {
 
   @ManyToOne(() => Role)
   @JoinColumn()
-  role!: Role;
+  role: Role;
 
   @OneToMany(() => Rent, (rent) => rent.user)
   rents?: Rent[];
+
+  @OneToMany(() => PasswordToken, (passwordToken) => passwordToken.user)
+  passwordTokens?: PasswordToken[];
 
   @OneToMany(() => Purchase, (purchase) => purchase.user)
   purchases?: Purchase[];

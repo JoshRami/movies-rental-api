@@ -13,10 +13,10 @@ Base requirements
 - [x] Admins can change a users' roles
 - [ ] A user should be able to buy/rent more than one movie on a single request
 - [x] An email should be sent when a user requests to buy/rent movies. This email should contain all the information related to its order.
-- [ ] Users can change their password or reset it. (Change a password implies the user is logged in & knows his current password. Reset means that he no longer remembers which his password was)
-- [ ] When resetting a password, a user should receive an email with instructions to do it
+- [x] Users can change their password or reset it. (Change a password implies the user is logged in & knows his current password. Reset means that he no longer remembers which his password was)
+- [x] When resetting a password, a user should receive an email with instructions to do it
 - [ ] The Nest.JS project should be Dockerized
-- [ ] Increase testing coverage to 80% (unit/integration)
+- [x] Increase testing coverage to 80% (unit/integration)
 - [x] Document your endpoints using Swagger
 
 Extra points!

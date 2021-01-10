@@ -116,4 +116,12 @@ export class UsersService {
     user.password = changePasswordDto;
     await this.userRepository.save(user);
   }
+
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({ email });
+    if (!user) {
+      throw new NotFoundException(`User not found, email: ${email}`);
+    }
+    return user;
+  }
 }
