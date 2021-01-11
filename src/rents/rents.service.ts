@@ -31,8 +31,10 @@ export class RentsService {
     });
 
     const total = rentDetailsSubtotals.reduce(
-      (totalAccumulator, currentSubtotal) => totalAccumulator + currentSubtotal,
+      (totalAccumulator, currentSubtotal) =>
+        +totalAccumulator + +currentSubtotal,
     );
+
     const rentPurchase = this.rentRepository.create({ total });
     rentPurchase.rentDetails = rentDetails;
     rentPurchase.user = userBuying;

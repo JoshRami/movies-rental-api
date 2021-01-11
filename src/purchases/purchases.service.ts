@@ -38,7 +38,8 @@ export class PurchasesService {
     });
 
     const total = purchaseDetailsSubtotals.reduce(
-      (totalAccumulator, currentSubtotal) => totalAccumulator + currentSubtotal,
+      (totalAccumulator, currentSubtotal) =>
+        +totalAccumulator + +currentSubtotal,
     );
     const purchase = this.purchasesRepository.create({ total });
     purchase.purchaseDetails = purchaseDetails;
