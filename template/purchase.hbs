@@ -98,7 +98,7 @@
     <tr>
     <td></td>
      <td>
-        <span class="wmi-callto">{{this.title}} - <span class="wmi-callto"><b>{{$this.salePrice}}</b></span></span>
+        <span class="wmi-callto">{{this.title}} - <span class="wmi-callto"><b>{{this.salePrice}}</b></span></span>
       </td>
      </tr>
   {{/each}}
@@ -109,13 +109,13 @@
      <td>
         <span class="wmi-callto">${{total}}</span>     </td>
   </tr>  
-  <tr>
+   <tr>
      <td>
-       <b>Transaction Date:</b>
+       <b>Purchase date:</b>
      </td>
      <td>
-        {{rentDate}}     </td>
-  </tr>
+        <span class="wmi-callto">{{purchaseDate}}</span>     </td>
+  </tr>  
   </tbody>
 </table>
  </div>

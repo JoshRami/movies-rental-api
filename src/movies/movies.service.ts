@@ -161,7 +161,7 @@ export class MoviesService {
       subject: 'Rent Transaction summary - Movie Rental ✔',
       context: {
         email: client.email,
-        movies,
+        movies: movies,
         total: rent.total,
         rentDate: rent.createdAt,
       },
@@ -172,15 +172,14 @@ export class MoviesService {
     const client = await this.usersService.getUser(userId);
     const moviesId = rentMoviesDto.moviesId;
 
-    await this.rentsService.returnMovies(moviesId, client);
-
-    const movies = await this.moviesRepository.find({
-      where: { id: In(moviesId) },
-    });
-    movies.forEach((movie) => {
+    const moviesToUpdateStock = await this.rentsService.returnMovies(
+      moviesId,
+      client,
+    );
+    moviesToUpdateStock.forEach((movie) => {
       movie.stock += 1;
     });
-    await this.moviesRepository.save(movies);
+    await this.moviesRepository.save(moviesToUpdateStock);
   }
 
   async purchaseMovies(buyMoviesDto: BuyMoviesDto, userId: number) {
@@ -227,7 +226,7 @@ export class MoviesService {
         email: client.email,
         movies,
         total: purchase.total,
-        rentDate: purchase.createdAt,
+        purchaseDate: purchase.createdAt,
       },
     });
   }

@@ -125,15 +125,18 @@ export class RentsService {
       where: { id: In(rentsDetailIds) },
     });
 
+    const moviesToUpdateStock: Movie[] = [];
     rentsDetailsEntities.forEach((rentDetail) => {
       const rentDetailFound = moviesIds.some(
         (movieId) => rentDetail.movie.id === movieId,
       );
-      if (rentDetailFound) {
+      if (rentDetailFound && !rentDetail.returnIt) {
+        moviesToUpdateStock.push(rentDetail.movie);
         rentDetail.returnIt = true;
       }
     });
 
     await this.rentDetailRepository.save(rentsDetailsEntities);
+    return moviesToUpdateStock;
   }
 }
