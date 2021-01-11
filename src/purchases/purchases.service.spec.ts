@@ -4,8 +4,6 @@ import { Purchase } from './purchases.entity';
 import { PurchasesService } from './purchases.service';
 import * as purchasesMocks from './mocks/purchases.mocks';
 import { mockUserModel } from '../users/mocks/user-mocks';
-import { mockMovieModel } from '../movies/mocks/movies-mocks';
-import { MoviesToBuyDetails } from 'src/movies/interfaces/movies-to-buy.interface';
 import { PurchaseDetail } from './purchases.detail.entity';
 import { mockPurchaseDetailModel } from './mocks/purchases.mocks.detail';
 import { Connection } from 'typeorm';

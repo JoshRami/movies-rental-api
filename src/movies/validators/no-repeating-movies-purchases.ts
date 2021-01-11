@@ -10,7 +10,6 @@ export class UniqueIdInMoviesConstrainsts
   implements ValidatorConstraintInterface {
   async validate(buyMoviesDetails: any): Promise<boolean> {
     const moviesIds = buyMoviesDetails.map((movie) => movie.movieId);
-    console.log(!moviesIds.some((val, i) => moviesIds.indexOf(val) !== i));
     return !moviesIds.some((val, i) => moviesIds.indexOf(val) !== i);
   }
 }

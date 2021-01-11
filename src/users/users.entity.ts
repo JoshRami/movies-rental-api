@@ -30,12 +30,12 @@ export class User {
   @JoinColumn()
   role: Role;
 
-  @OneToMany(() => Rent, (rent) => rent.user)
-  rents?: Rent[];
-
   @OneToMany(() => PasswordToken, (passwordToken) => passwordToken.user)
   passwordTokens?: PasswordToken[];
 
   @OneToMany(() => Purchase, (purchase) => purchase.user)
   purchases?: Purchase[];
+
+  @OneToMany(() => Rent, (rent) => rent.user)
+  rents?: Rent[];
 }

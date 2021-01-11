@@ -7,8 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Rent } from '../rents/rents.entity';
 import { PurchaseDetail } from '../purchases/purchases.detail.entity';
+import { RentDetail } from '../rents/rents.detail.entity';
 
 @Entity()
 export class Movie {
@@ -46,8 +46,8 @@ export class Movie {
   @JoinTable({ name: 'movies_tags' })
   tags?: Tag[];
 
-  @OneToMany(() => Rent, (rent) => rent.movie)
-  rents?: Rent[];
+  @OneToMany(() => RentDetail, (rentDetail) => rentDetail.movie)
+  rentDetails?: RentDetail[];
 
   @OneToMany(() => PurchaseDetail, (purchaseDetail) => purchaseDetail.movie)
   purchaseDetails?: PurchaseDetail[];

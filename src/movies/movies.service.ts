@@ -20,6 +20,7 @@ import { MovieParamsDto } from './dto/query.params.movies.dto';
 import { SortingOptionsEnum } from './enums/sorting.enum';
 import { BuyMoviesDto } from './dto/buy-movies.dto';
 import { MoviesToBuyDetails } from './interfaces/movies-to-buy.interface';
+import { RentMoviesDto } from './dto/rent-movies.dto';
 
 @Injectable()
 export class MoviesService {
@@ -130,49 +131,43 @@ export class MoviesService {
     await this.moviesRepository.save(movie);
   }
 
-  async rentMovie(movieId: number, userId: number) {
-    const movie = await this.moviesRepository.findOne(movieId);
-    const user = await this.usersService.getUser(userId);
-    if (!movie.stock || !movie.availability) {
+  async rentMovies(rentMoviesDto: RentMoviesDto, userId: number) {
+    const moviesId = rentMoviesDto.moviesId;
+    const client = await this.usersService.getUser(userId);
+
+    const movies = await this.moviesRepository.find({
+      where: { id: In(moviesId) },
+    });
+
+    const canRentMovies = movies.every((movie) => {
+      return movie.availability && movie.stock > 0;
+    });
+
+    const canUserRentMovies = await this.rentsService.validateRentTransaction(
+      client,
+      moviesId,
+    );
+    if (!canRentMovies || !canUserRentMovies) {
       throw new ConflictException(
-        'The movie is not available or there are not stock',
+        'Rent transaction cannot be proccessed, user already rente any movies in movies to rent list or some movies are not availables',
       );
     }
-    const transaction = await this.rentsService.insertRentTransaction(
-      user,
-      movie,
-    );
-    movie.stock -= 1;
-    await this.moviesRepository.save(movie);
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: 'ia.josuequinteros@ufg.edu.sv',
-      template: 'transaction',
-      subject: 'Transaction summary - Movie Rental ✔',
-      context: {
-        email: user.email,
-        movie,
-        transactionType: 'Rental',
-        rentDate: transaction.rentDate,
-      },
-    });
-    return transaction;
+    await this.rentsService.makeRentTransaction(client, movies);
   }
 
-  async returnMovie(rentId: number, userId: number) {
-    const rentTransaction = await this.rentsService.getRentTransactionById(
-      rentId,
-    );
-    if (userId !== rentTransaction.user.id) {
-      throw new BadRequestException(
-        'The user is not the owner of the rent transaction',
-      );
-    }
-    await this.rentsService.deleteRentTransaction(rentId);
+  async returnMovies(rentMoviesDto: RentMoviesDto, userId: number) {
+    const client = await this.usersService.getUser(userId);
+    const moviesId = rentMoviesDto.moviesId;
 
-    const movie = await this.moviesRepository.findOne(rentTransaction.movie.id);
-    movie.stock += 1;
-    return await this.moviesRepository.save(movie);
+    await this.rentsService.returnMovies(moviesId, client);
+
+    const movies = await this.moviesRepository.find({
+      where: { id: In(moviesId) },
+    });
+    movies.forEach((movie) => {
+      movie.stock += 1;
+    });
+    await this.moviesRepository.save(movies);
   }
 
   async purchaseMovies(buyMoviesDto: BuyMoviesDto, userId: number) {
@@ -197,12 +192,14 @@ export class MoviesService {
         'Sorry, any movies have not enough stock or are not availables',
       );
     }
+
     const moviesToBuyDetails: MoviesToBuyDetails[] = movies.map((movie) => {
       const movieToBuy = moviesToBuy.find(
         (movieToBuy) => movieToBuy.movieId === movie.id,
       );
       return { movieToBuy: movie, quantity: movieToBuy.quantity };
     });
+
     await this.purchasesService.makePurchase(client, moviesToBuyDetails);
   }
 
@@ -215,6 +212,17 @@ export class MoviesService {
     });
 
     return purchases;
+  }
+
+  async getUserRents(userId: number) {
+    const user = await this.usersService.getUser(userId);
+    const rents = await this.rentsService.getUserRents(user);
+
+    rents.forEach((rent) => {
+      delete rent.user;
+    });
+
+    return rents;
   }
 
   getSortByParam(sortBy: string) {

@@ -1,12 +1,13 @@
-import { Movie } from '../movies/movies.entity';
+import { User } from '../users/users.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../users/users.entity';
+import { RentDetail } from './rents.detail.entity';
 
 @Entity()
 export class Rent {
@@ -14,16 +15,16 @@ export class Rent {
   id: number;
 
   @CreateDateColumn({
-    name: 'rentDate',
+    name: 'purchaseDate',
   })
-  rentDate: Date;
+  createdAt: Date;
 
-  @Column()
-  rentPrice: number;
+  @Column({ type: 'numeric', precision: 2 })
+  total: number;
 
-  @ManyToOne(() => Movie, (movie) => movie.rents, { onDelete: 'CASCADE' })
-  movie: Movie;
-
-  @ManyToOne(() => User, (user) => user.rents, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.rents)
   user: User;
+
+  @OneToMany(() => RentDetail, (rentDetail) => rentDetail.rent)
+  rentDetails: RentDetail[];
 }

@@ -1,23 +1,23 @@
 import { Movie } from '../movies/movies.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Purchase } from './purchases.entity';
+import { Rent } from './rents.entity';
 
 @Entity()
-export class PurchaseDetail {
+export class RentDetail {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  quantity: number;
 
   @Column({ type: 'numeric', precision: 2 })
   subtotal: number;
 
-  @ManyToOne(() => Movie, (movie) => movie.purchaseDetails, {
+  @Column({ default: false })
+  returnIt: boolean;
+
+  @ManyToOne(() => Movie, (movie) => movie.rentDetails, {
     onDelete: 'CASCADE',
   })
   movie: Movie;
 
-  @ManyToOne(() => Purchase, (purchase) => purchase.purchaseDetails)
-  purchase: Purchase;
+  @ManyToOne(() => Rent, (rent) => rent.rentDetails)
+  rent: Rent;
 }

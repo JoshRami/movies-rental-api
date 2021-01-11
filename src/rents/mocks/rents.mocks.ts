@@ -1,15 +1,15 @@
-import { mockMovieModel } from '../../movies/mocks/movies-mocks';
 import { mockUserModel } from '../../users/mocks/user-mocks';
 import { Rent } from '../rents.entity';
+import { mockRentDetailModel } from './rents.mocks.detail';
 
-export const mockRentTransaction = {
-  movie: mockMovieModel,
+export const mockRent = {
   user: mockUserModel,
-  rentPrice: 10,
-  rentDate: new Date('2000'),
+  createdAt: new Date('2000'),
+  total: 10,
+  rentDetails: [mockRentDetailModel],
 };
 
-export const mockRentTransactionModel: Rent = {
+export const mockRentModel: Rent = {
   id: 1,
-  ...mockRentTransaction,
+  ...mockRent,
 };

@@ -22,6 +22,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MoviesService } from './movies.service';
 import { MovieParamsDto } from './dto/query.params.movies.dto';
 import { BuyMoviesDto } from './dto/buy-movies.dto';
+import { RentMoviesDto } from './dto/rent-movies.dto';
 
 @ApiTags('Movies')
 @Controller('movies')
@@ -179,12 +180,12 @@ export class MoviesController {
     await this.moviesService.unassingTags(movieId, tagsToMovieDto);
   }
 
-  @Post(':id/rent')
-  @HttpCode(200)
+  @Post('me/rent')
+  @HttpCode(204)
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'The rent of the movies has been successful.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
@@ -200,20 +201,12 @@ export class MoviesController {
     status: 422,
     description: 'Error while interacting with the database',
   })
-  async rentMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
+  async rentMovies(@Body() rentMoviesDto: RentMoviesDto, @Req() req) {
     const userId = req.user.id;
-    const transaction = await this.moviesService.rentMovie(movieId, userId);
-    return {
-      data: {
-        id: transaction.id,
-        rentDate: transaction.rentDate,
-        movie: transaction.movie,
-      },
-      rentByUser: transaction.user.id,
-    };
+    await this.moviesService.rentMovies(rentMoviesDto, userId);
   }
 
-  @Post('rent/:id/return')
+  @Post('me/rent/return')
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
   @HttpCode(204)
@@ -233,12 +226,9 @@ export class MoviesController {
     status: 422,
     description: 'Error while interacting with the database',
   })
-  async returnRentedMovie(
-    @Param('id', ParseIntPipe) rentId: number,
-    @Req() req,
-  ) {
+  async returnRentedMovie(@Body() rentMoviesDto: RentMoviesDto, @Req() req) {
     const userId = req.user.id;
-    await this.moviesService.returnMovie(rentId, userId);
+    await this.moviesService.returnMovies(rentMoviesDto, userId);
   }
 
   @Post('/me/buy')
@@ -275,7 +265,7 @@ export class MoviesController {
   @HttpCode(200)
   @ApiResponse({
     status: 200,
-    description: 'The movies has been successfully return it.',
+    description: 'The purchases been successfully return it.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({
@@ -290,6 +280,31 @@ export class MoviesController {
   async getBuyedUserMovies(@Req() req) {
     const userId = req.user.id;
     const purchases = await this.moviesService.getUserPurchases(userId);
+
+    return { data: { userOwnerId: userId, purchases } };
+  }
+
+  @Get('/me/rents')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'The rents  has been successfully return it.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({
+    status: 404,
+    description: 'The user have not made any rents yet',
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
+  async getRentsByUser(@Req() req) {
+    const userId = req.user.id;
+    const purchases = await this.moviesService.getUserRents(userId);
 
     return { data: { userOwnerId: userId, purchases } };
   }
