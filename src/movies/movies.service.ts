@@ -152,7 +152,20 @@ export class MoviesService {
         'Rent transaction cannot be proccessed, user already rente any movies in movies to rent list or some movies are not availables',
       );
     }
-    await this.rentsService.makeRentTransaction(client, movies);
+    const rent = await this.rentsService.makeRentTransaction(client, movies);
+
+    await this.mailerService.sendMail({
+      to: client.email,
+      from: 'ia.josuequinteros@ufg.edu.sv',
+      template: 'rent',
+      subject: 'Rent Transaction summary - Movie Rental ✔',
+      context: {
+        email: client.email,
+        movies,
+        total: rent.total,
+        rentDate: rent.createdAt,
+      },
+    });
   }
 
   async returnMovies(rentMoviesDto: RentMoviesDto, userId: number) {
@@ -200,7 +213,23 @@ export class MoviesService {
       return { movieToBuy: movie, quantity: movieToBuy.quantity };
     });
 
-    await this.purchasesService.makePurchase(client, moviesToBuyDetails);
+    const purchase = await this.purchasesService.makePurchase(
+      client,
+      moviesToBuyDetails,
+    );
+
+    await this.mailerService.sendMail({
+      to: client.email,
+      from: 'ia.josuequinteros@ufg.edu.sv',
+      template: 'purchase',
+      subject: 'Purchase Transaction summary - Movie Rental ✔',
+      context: {
+        email: client.email,
+        movies,
+        total: purchase.total,
+        rentDate: purchase.createdAt,
+      },
+    });
   }
 
   async getUserPurchases(userId: number) {

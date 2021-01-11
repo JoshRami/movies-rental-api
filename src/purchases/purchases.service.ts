@@ -55,10 +55,12 @@ export class PurchasesService {
     await queryRunner.startTransaction();
     try {
       await queryRunner.manager.save(purchaseDetails);
-      await queryRunner.manager.save(purchase);
+      const purchaseEntity = await queryRunner.manager.save(purchase);
       await queryRunner.manager.save(moviesStockUpdated);
 
       await queryRunner.commitTransaction();
+
+      return purchaseEntity;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw err;

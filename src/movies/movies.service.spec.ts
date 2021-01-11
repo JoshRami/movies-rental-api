@@ -17,7 +17,10 @@ import { PurchasesService } from '../purchases/purchases.service';
 import { mockUserModel } from '../users/mocks/user-mocks';
 import { MailerService } from '@nestjs-modules/mailer';
 import { SortingOptionsEnum } from './enums/sorting.enum';
-import { mockPurchase } from '../purchases/mocks/purchases.mocks';
+import {
+  mockPurchase,
+  mockPurchaseModel,
+} from '../purchases/mocks/purchases.mocks';
 import { mockRentModel } from '../rents/mocks/rents.mocks';
 
 describe('MoviesService', () => {
@@ -41,20 +44,18 @@ describe('MoviesService', () => {
 
   const mockRentsServices = {
     validateRentTransaction: jest.fn().mockReturnValue(true),
-    makeRentTransaction: jest.fn().mockImplementation(() => Promise.resolve()),
+    makeRentTransaction: jest.fn().mockReturnValue(mockRentModel),
     returnMovies: jest.fn().mockImplementation(() => Promise.resolve()),
     getUserRents: jest.fn().mockReturnValue([mockRentModel]),
   };
 
   const mockPurchasesServices = {
-    makePurchase: jest.fn().mockImplementation(() => {
-      Promise.resolve();
-    }),
+    makePurchase: jest.fn().mockReturnValue(mockPurchaseModel),
     getUserPurchases: jest.fn().mockReturnValue([mockPurchase]),
   };
 
   const mockMailerServices = {
-    sendMail: jest.fn().mockReturnValue(undefined),
+    sendMail: jest.fn().mockReturnValue({}),
   };
 
   beforeEach(async () => {

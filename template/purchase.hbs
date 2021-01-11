@@ -84,29 +84,31 @@
   <tbody>
   <tr>
      <td>
-       <b>💌 Dear user, thank you for your purchase 💌</b>
+       <b>💌Here is a summary of your most recent purchase transaction</b>
      </td>
   <tr>
      <td>
        <b>Movie:</b>
      </td>
      <td>
-        <span class="wmi-callto">{{movie.title}}</span>     </td>
+        <span class="wmi-callto"><b>Details</b></span>
+    </td>
   </tr>
+  {{#each movies}}
+    <tr>
+    <td></td>
+     <td>
+        <span class="wmi-callto">{{this.title}} - <span class="wmi-callto"><b>{{$this.salePrice}}</b></span></span>
+      </td>
+     </tr>
+  {{/each}}
   <tr>
      <td>
-       <b>Price:</b>
+       <b>Total:</b>
      </td>
      <td>
-        <span class="wmi-callto">${{movie.salePrice}}</span>     </td>
+        <span class="wmi-callto">${{total}}</span>     </td>
   </tr>  
-  <tr>
-     <td>
-       <b>Transaction Type:</b>
-     </td>
-     <td>
-        <span class="wmi-callto">{{transactionType}}</span>     </td>
-  </tr>
   <tr>
      <td>
        <b>Transaction Date:</b>
@@ -117,8 +119,6 @@
   </tbody>
 </table>
  </div>
-    
-
 </div>
 </body>
 </html>

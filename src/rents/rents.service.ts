@@ -47,10 +47,12 @@ export class RentsService {
     await queryRunner.startTransaction();
     try {
       await queryRunner.manager.save(rentDetails);
-      await queryRunner.manager.save(rentPurchase);
+      const rent = await queryRunner.manager.save(rentPurchase);
       await queryRunner.manager.save(moviesStockUpdated);
 
       await queryRunner.commitTransaction();
+
+      return rent;
     } catch (err) {
       await queryRunner.rollbackTransaction();
       throw err;
