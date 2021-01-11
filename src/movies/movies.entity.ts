@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Rent } from '../rents/rents.entity';
+import { PurchaseDetail } from '../purchases/purchases.detail.entity';
 
 @Entity()
 export class Movie {
@@ -32,6 +33,9 @@ export class Movie {
   @Column({ type: 'numeric', precision: 2 })
   salePrice: number;
 
+  @Column({ type: 'numeric', precision: 2 })
+  rentPrice: number;
+
   @Column({ default: 0 })
   likes?: number;
 
@@ -44,4 +48,7 @@ export class Movie {
 
   @OneToMany(() => Rent, (rent) => rent.movie)
   rents?: Rent[];
+
+  @OneToMany(() => PurchaseDetail, (purchaseDetail) => purchaseDetail.movie)
+  purchaseDetails?: PurchaseDetail[];
 }

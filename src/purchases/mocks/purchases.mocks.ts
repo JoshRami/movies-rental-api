@@ -1,12 +1,12 @@
-import { mockMovieModel } from '../../movies/mocks/movies-mocks';
 import { mockUserModel } from '../../users/mocks/user-mocks';
 import { Purchase } from '../purchases.entity';
+import { mockPurchaseDetailModel } from './purchases.mocks.detail';
 
 export const mockPurchase = {
   user: mockUserModel,
-  movie: mockMovieModel,
-  purchasesPrice: mockMovieModel.salePrice,
-  rentDate: new Date('2000'),
+  createdAt: new Date('2000'),
+  total: 10,
+  purchaseDetails: [mockPurchaseDetailModel],
 };
 
 export const mockPurchaseModel: Purchase = {

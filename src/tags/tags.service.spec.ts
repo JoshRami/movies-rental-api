@@ -12,7 +12,7 @@ describe('TagsService', () => {
     create: jest.fn().mockReturnValue(TagsMocks.mockTagModel),
     save: jest.fn().mockReturnValue(TagsMocks.mockTagModel),
     delete: jest.fn().mockReturnValue({ affected: 1 }),
-    find: jest.fn().mockReturnValue(TagsMocks.tags),
+    find: jest.fn().mockReturnValue(TagsMocks.tags.tags),
     findOne: jest.fn().mockReturnValue(TagsMocks.mockTagModel),
   };
 
@@ -115,11 +115,11 @@ describe('TagsService', () => {
   describe('When getting tags', () => {
     it('should get tags', async () => {
       const tags = await service.getTags();
-      expect(tags).toBe(TagsMocks.tags);
+      expect(tags).toBe(TagsMocks.tags.tags);
     });
 
     it('should throw error when there are not any tags', async () => {
-      mockRepo.find = jest.fn().mockReturnValue(undefined);
+      mockRepo.find = jest.fn().mockReturnValue([]);
       try {
         await service.getTags();
       } catch (error) {

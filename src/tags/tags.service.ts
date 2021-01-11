@@ -53,7 +53,7 @@ export class TagsService {
 
   async getTags() {
     const tags = await this.tagRepository.find();
-    if (!tags) {
+    if (!tags.length) {
       throw new NotFoundException(`Tags not found`);
     }
     return tags;

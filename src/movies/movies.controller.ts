@@ -21,6 +21,7 @@ import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 import { MoviesService } from './movies.service';
 import { MovieParamsDto } from './dto/query.params.movies.dto';
+import { BuyMoviesDto } from './dto/buy-movies.dto';
 
 @ApiTags('Movies')
 @Controller('movies')
@@ -240,39 +241,56 @@ export class MoviesController {
     await this.moviesService.returnMovie(rentId, userId);
   }
 
-  @Post(':id/buy')
+  @Post('/me/buy')
   @UseGuards(JwtAuthGuard, WhitelistGuard)
   @ApiBearerAuth()
-  @HttpCode(200)
+  @HttpCode(204)
   @ApiResponse({
-    status: 200,
-    description: 'The movie has been successfuly buyed.',
+    status: 204,
+    description: 'The movies has been successfuly buyed.',
   })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'movie not found' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
   @ApiResponse({
     status: 409,
-    description: 'The movie is not available or there is not stock',
+    description: 'The movies are not available or there is not stock',
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad format input data, or the user have not rent this movie',
+    description: 'Bad format input data',
   })
   @ApiResponse({
     status: 422,
     description: 'Error while interacting with the database',
   })
-  async buyMovie(@Param('id', ParseIntPipe) movieId: number, @Req() req) {
+  async buyMovies(@Body() buyMoviesDto: BuyMoviesDto, @Req() req) {
     const userId = req.user.id;
-    const purchase = await this.moviesService.purchaseMovie(movieId, userId);
-    return {
-      data: {
-        id: purchase.id,
-        purchaseDate: purchase.rentDate,
-        movie: purchase.movie,
-      },
-      buyerUserId: purchase.user.id,
-    };
+    await this.moviesService.purchaseMovies(buyMoviesDto, userId);
+  }
+
+  @Get('/me/buy')
+  @UseGuards(JwtAuthGuard, WhitelistGuard)
+  @ApiBearerAuth()
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'The movies has been successfully return it.',
+  })
+  @ApiResponse({ status: 403, description: 'Forbidden' })
+  @ApiResponse({
+    status: 404,
+    description: 'The user have not made any purchase yet',
+  })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiResponse({
+    status: 422,
+    description: 'Error while interacting with the database',
+  })
+  async getBuyedUserMovies(@Req() req) {
+    const userId = req.user.id;
+    const purchases = await this.moviesService.getUserPurchases(userId);
+
+    return { data: { userOwnerId: userId, purchases } };
   }
 }

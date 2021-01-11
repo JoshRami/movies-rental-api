@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { Role } from '../users/roles/role.entity';
 import { Rent } from '../rents/rents.entity';
-import { Purchase } from '../purchases/purchases.entity';
 import { PasswordToken } from '../auth/password-tokens/passwords-token.entity';
+import { Purchase } from '../purchases/purchases.entity';
 
 @Entity()
 export class User {

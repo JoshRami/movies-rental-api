@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TagsModule } from 'src/tags/tags.module';
 import { RentsModule } from 'src/rents/rents.module';
 import { UsersModule } from 'src/users/users.module';
-import { PurchaseModule } from 'src/purchases/purchases.module';
+import { PurchaseModule } from '../purchases/purchases.module';
 
 @Module({
   imports: [

@@ -41,6 +41,11 @@ export class CreateMovieDto {
   salePrice: number;
 
   @ApiProperty()
+  @IsNotEmpty()
+  @IsNumber()
+  rentPrice: number;
+
+  @ApiProperty()
   @IsBoolean()
   availability: boolean;
 }

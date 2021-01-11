@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagsService } from '../tags/tags.service';
 
-import { Like, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { TagsToMovieDto } from './dto/tags-to-movie.dto';
 import { CreateMovieDto } from './dto/create.movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -18,6 +18,8 @@ import { PurchasesService } from '../purchases/purchases.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { MovieParamsDto } from './dto/query.params.movies.dto';
 import { SortingOptionsEnum } from './enums/sorting.enum';
+import { BuyMoviesDto } from './dto/buy-movies.dto';
+import { MoviesToBuyDetails } from './interfaces/movies-to-buy.interface';
 
 @Injectable()
 export class MoviesService {
@@ -173,35 +175,46 @@ export class MoviesService {
     return await this.moviesRepository.save(movie);
   }
 
-  async purchaseMovie(movieId: number, userId: number) {
-    const movie = await this.moviesRepository.findOne(movieId);
-    const user = await this.usersService.getUser(userId);
-    if (!movie.stock || !movie.availability) {
-      throw new ConflictException(
-        'The movie is not available or there are not stock',
-      );
-    }
-    const purchase = await this.purchasesService.insertPurchaseTransaction(
-      user,
-      movie,
-    );
-    movie.stock -= 1;
+  async purchaseMovies(buyMoviesDto: BuyMoviesDto, userId: number) {
+    const moviesToBuy = buyMoviesDto.movies;
+    const moviesIds = moviesToBuy.map((movie) => movie.movieId);
 
-    await this.moviesRepository.save(movie);
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: 'ia.josuequinteros@ufg.edu.sv',
-      template: 'transaction',
-      subject: 'Transaction summary - Movie Rental ✔',
-      context: {
-        email: user.email,
-        movie,
-        transactionType: 'Purchase',
-        rentDate: purchase.rentDate,
-      },
+    const client = await this.usersService.getUser(userId);
+
+    const movies = await this.moviesRepository.find({
+      where: { id: In(moviesIds) },
     });
 
-    return purchase;
+    const canBuyMovies = movies.every((movie) => {
+      const movieToBuy = moviesToBuy.find(
+        (movieToBuy) => movieToBuy.movieId === movie.id,
+      );
+      return movieToBuy.quantity <= movie.stock && movie.availability;
+    });
+
+    if (!canBuyMovies) {
+      throw new ConflictException(
+        'Sorry, any movies have not enough stock or are not availables',
+      );
+    }
+    const moviesToBuyDetails: MoviesToBuyDetails[] = movies.map((movie) => {
+      const movieToBuy = moviesToBuy.find(
+        (movieToBuy) => movieToBuy.movieId === movie.id,
+      );
+      return { movieToBuy: movie, quantity: movieToBuy.quantity };
+    });
+    await this.purchasesService.makePurchase(client, moviesToBuyDetails);
+  }
+
+  async getUserPurchases(userId: number) {
+    const user = await this.usersService.getUser(userId);
+    const purchases = await this.purchasesService.getUserPurchases(user);
+
+    purchases.forEach((purchase) => {
+      delete purchase.user;
+    });
+
+    return purchases;
   }
 
   getSortByParam(sortBy: string) {
