@@ -45,7 +45,9 @@ describe('MoviesService', () => {
   const mockRentsServices = {
     validateRentTransaction: jest.fn().mockReturnValue(true),
     makeRentTransaction: jest.fn().mockReturnValue(mockRentModel),
-    returnMovies: jest.fn().mockImplementation(() => Promise.resolve()),
+    returnMovies: jest
+      .fn()
+      .mockImplementation(() => Promise.resolve([MoviesMock.mockMovieModel])),
     getUserRents: jest.fn().mockReturnValue([mockRentModel]),
   };
 
@@ -291,6 +293,10 @@ describe('MoviesService', () => {
       const movieId = MoviesMock.mockMovieModel.id;
       const userId = mockUserModel.id;
 
+      const availableMovie = MoviesMock.mockMovieModel;
+      availableMovie.availability = true;
+
+      mockRepo.find = jest.fn().mockReturnValue([availableMovie]);
       await service.purchaseMovies(
         { movies: [{ movieId, quantity: 1 }] },
         userId,

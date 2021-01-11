@@ -1,13 +1,10 @@
 FROM node:15
 
-WORKDIR /app
+WORKDIR /user/src/app
 
-ADD package.json /app/package.json
+COPY . .
 
 RUN npm install
-
-ADD . /app
-
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/main",] 
